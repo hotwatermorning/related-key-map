@@ -1,0 +1,53 @@
+extends layout
+
+mixin key(key_name, chords, style)
+  div(class!=attributes.class)
+    img(src="../images/expand.png").expand-image
+    .key-name-box
+      = key_name
+    .chords-box
+      - var tmp = chords.concat([" ", " ", " ", " ", " ", " ", " "])
+      - var line1 = tmp.slice(0, 4).join(" ")
+      - var line2 = tmp.slice(4, 7).join(" ")
+      .chords-line
+        = line1
+      .chords-line
+        = line2
+
+mixin tonic-key(key_name, chords)
+  +key(key_name, chords)(class="tonic-key")
+
+mixin directly-related-key(key_name, chords)
+  +key(key_name, chords)(class="directly-related-key")
+
+mixin indirectly-related-key(key_name, chords)
+  +key(key_name, chords)(class="indirectly-related-key")
+
+block content
+  div.title-box
+    h1= title
+  .key-container
+    .key-row
+      +indirectly-related-key("G#m", ["C#m", "D#m7", "Fm7", "F#M7", "       G#7", "A#m7", "Cm7-5"])
+      .arrow ←
+      +directly-related-key("G", ["G", "Dm7"])
+      .arrow →
+      +indirectly-related-key("Em", ["Em", "Dm7"])
+    .arrow-row
+      .arrow ↑
+      .arrow ↑
+    .key-row
+      +directly-related-key("Cm", ["Cm", "Dm7"])
+      .arrow ←
+      +tonic-key("C", ["C", "Dm7"])
+      .arrow →
+      +directly-related-key("Am", ["Am", "Dm7"])
+    .arrow-row
+      .arrow ↓
+      .arrow ↓
+    .key-row
+      +indirectly-related-key("Fm", ["Fm", "Dm7"])
+      .arrow ←
+      +directly-related-key("F", ["F", "Dm7"])
+      .arrow →
+      +indirectly-related-key("Dm", ["Dm", "Dm7"])
