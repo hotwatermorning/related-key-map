@@ -23,31 +23,66 @@ mixin directly-related-key(key_name, chords)
 mixin indirectly-related-key(key_name, chords)
   +key(key_name, chords)(class="indirectly-related-key")
 
+mixin dominant-arrow
+  .arrow-box
+    .arrow-box-title= "属調"
+    .up-arrow
+
+mixin subdominant-arrow
+  .arrow-box
+    .down-arrow
+    .arrow-box-bottom-padding
+    .arrow-box-title= "下属調"
+
+mixin arrow-row(arrow_type)
+  .arrow-row
+    .arrow-padding-side 
+    +#{arrow_type}
+    .arrow-padding-mid
+    +#{arrow_type}
+    .arrow-padding-mid
+    +#{arrow_type}
+    .arrow-padding-side 
+
+mixin dominant-arrow-row
+  +arrow-row("dominant-arrow")
+
+mixin subdominant-arrow-row
+  +arrow-row("subdominant-arrow")
+
+mixin left-arrow
+  .arrow-box
+    .arrow-box-head-padding
+    .arrow-box-title= "同主調"
+    .left-arrow
+
+mixin right-arrow
+  .arrow-box
+    .arrow-box-head-padding
+    .arrow-box-title= "平行調"
+    .right-arrow
+
 block content
   div.title-box
     h1= title
   .key-container
     .key-row
       +indirectly-related-key("G#m", ["C#m", "D#m7", "Fm7", "F#M7", "       G#7", "A#m7", "Cm7-5"])
-      .arrow-box: .arrow
+      +left-arrow
       +directly-related-key("G", ["G", "Dm7"])
-      .arrow-box: .arrow
+      +right-arrow
       +indirectly-related-key("Em", ["Em", "Dm7"])
-    .arrow-row
-      .arrow-box: .arrow
-      .arrow-box: .arrow
+    +dominant-arrow-row
     .key-row
       +directly-related-key("Cm", ["Cm", "Dm7"])
-      .arrow-box: .arrow
+      +left-arrow
       +tonic-key("C", ["C", "Dm7"])
-      .arrow-box: .arrow
+      +right-arrow
       +directly-related-key("Am", ["Am", "Dm7"])
-    .arrow-box: .arrow-row
-      .arrow-box: .arrow
-      .arrow-box: .arrow
+    +subdominant-arrow-row
     .key-row
       +indirectly-related-key("Fm", ["Fm", "Dm7"])
-      .arrow-box: .arrow
+      +left-arrow
       +directly-related-key("F", ["F", "Dm7"])
-      .arrow-box: .arrow
+      +right-arrow
       +indirectly-related-key("Dm", ["Dm", "Dm7"])

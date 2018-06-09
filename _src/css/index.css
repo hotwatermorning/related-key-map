@@ -125,7 +125,55 @@ body {
 }
 
 .chords-line {
+}
 
+%arrow-base {
+  display:inline-block;
+  height:18px;
+  width:23px;
+  background-color: var(--arrow-color);
+  position:relative;
+
+  &:before {
+    position:absolute;
+    content:"";
+    width:0;
+    height:0;
+    border:20px solid transparent;
+    border-left:20px solid var(--arrow-color);
+    left:22px;
+    top:-11px;
+  }
+}
+
+.left-arrow {
+  @extend %arrow-base;
+  transform: rotate(180deg) translate(-40px, -15px);
+}
+
+.right-arrow {
+  @extend %arrow-base;
+  transform: rotate(0deg)  translate(25px, 25px);
+}
+
+.up-arrow {
+  @extend %arrow-base;
+  transform: rotate(-90deg) translate(-29px, 34px);
+}
+
+.down-arrow {
+  @extend %arrow-base;
+  transform: rotate(90deg) translate(16px, -34px);
+}
+
+.arrow-box-head-padding {
+  width: 90px;
+  height: 25px;
+}
+
+.arrow-box-bottom-padding {
+  width: 90px;
+  height: 35px;
 }
 
 .arrow-box {
@@ -133,22 +181,18 @@ body {
   height: 90px;
 }
 
-.arrow {
-  display:inline-block;
-  height:20px;
-  width:40px;
-  background-color: var(--arrow-color);
-  position:relative;
-  top:20px;
+.arrow-box-title {
+  width: 90px;
+  text-align: center;
+  transform: translate(0, 4px);
 }
 
-.arrow:before {
-  position:absolute;
-  content:"";
-  width:0;
-  height:0;
-  border:30px solid transparent;
-  border-left:30px solid var(--arrow-color);
-  left:39px;
-  top:-20px;
+.arrow-padding-side {
+  width: 75px;
+  height: 90px;
+}
+
+.arrow-padding-mid {
+  width: 240px;
+  height: 90px;
 }
