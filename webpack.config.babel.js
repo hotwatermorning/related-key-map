@@ -21,26 +21,12 @@ module.exports = [{
             presets: [ "env" ]
           }
         }],
-      }]
-    },
-  },{
-    entry: {
-      index: __dirname + "/_src/css/index.css"
-    },
-    output: {
-      path: __dirname + "/public/css/",
-      filename: "[name].bundle.css"
-    },
-    module: {
-      rules: [{
+      },{
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: "css-loader?minimize!postcss-loader"
-        })
+        use: [ "style-loader", "postcss-loader" ]
       }]
     },
-    plugins: [
-      new ExtractTextPlugin("[name].bundle.css")
-    ]
+    // resolve: {
+    //   moduleDirectories
+    // }
   }];

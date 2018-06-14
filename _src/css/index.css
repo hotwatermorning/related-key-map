@@ -3,6 +3,7 @@
 :root {
   --arrow-color: hsl(110, 60%, 80%);
   --font-family: "Cardo";
+  --expand-image-size: 40px;
 }
 
 body {
@@ -90,7 +91,7 @@ body {
 
 .key-name-box {
   height: 75px;
-  width: 240px;
+  width: calc(240px - var(--expand-image-size) * 2);
   text-align: center;
   font-size: 50px;
   font-family: var(--font-family), serif;
@@ -99,14 +100,15 @@ body {
   float: none;
   position: relative;
   top: 10px;
-  left: 20px;
+  left: var(--expand-image-size);
 }
 
 .expand-image {
   float: right;
-  width: 40px;
-  height: 40px;
+  width: var(--expand-image-size);
+  height: var(--expand-image-size);
   position: relative;
+  border-radius: 20px;
   /* top: -10px;
   left: 10px; */
   /* transfrom: translate(20px, -20px); */
