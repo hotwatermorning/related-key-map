@@ -6,110 +6,105 @@ const $ = require("jquery");
 
 const mod12 = n => { return n % 12; };
 
-class RootName
-{
-    constructor(sharpKeyName, flatKeyName) {
-        this.sharpKeyName_ = sharpKeyName;
-        this.flatKeyName_ = (flatKeyName ? flatKeyName : sharpKeyName);
-    }
-
-    get sharpKeyName() { return this.sharpKeyName_; }
-    get flatKeyName() { return this.flatKeyName_; }
+// 異名同音調があるときの表示モード
+const DisplayMode = {
+    kSharp: 0,
+    kFlat: 1
 };
 
-const rootNames = [
-    new RootName("C"),
-    new RootName("C#", "Db"),
-    new RootName("D"),
-    new RootName("D#", "Eb"),
-    new RootName("E"),
-    new RootName("F"),
-    new RootName("F#", "Gb"),
-    new RootName("G"),
-    new RootName("G#", "Ab"),
-    new RootName("A"),
-    new RootName("A#", "Bb"),
-    new RootName("B"),
-];
+const kCurrentDisplayMode = DisplayMode.kSharp;
 
-const intervalNames = [
-    new RootName("Ⅰ"),
-    new RootName("I#", "Ⅱb"),
-    new RootName("Ⅱ"),
-    new RootName("Ⅱ#", "Ⅲb"),
-    new RootName("Ⅲ"),
-    new RootName("Ⅳ"),
-    new RootName("Ⅳ#", "Ⅴb"),
-    new RootName("Ⅴ"),
-    new RootName("Ⅴ#", "Ⅵb"),
-    new RootName("Ⅵ"),
-    new RootName("Ⅵ#", "Ⅶb"),
-    new RootName("Ⅶ"),
-];
+const ScaleShiftDirection = {
+    kDominant: 0,
+    kSubdominant: 1,
+}
 
-class ScaleChord
-{
-    constructor(index, chordType) {
-        this.index_ = index;
-        this.chordType_ = chordType;
+const kCMajorScale = ["C", "D", "E", "F", "G", "A", "B"];
+const kAMinorScale = ["A", "B", "C", "D", "E", "F", "G"];
+
+function shiftScale(step, direction, isMajor) {
+    var tmp = (isMajor ? kCMajorScale : kAMinorScale).slice();
+
+    console.assert(step <= 7);
+    for(var i = 0; i < step; ++i) {
+        if(direction == ScaleShiftDirection.kDominant) {
+            tmp = tmp.slice(4, 7).concat(tmp.slice(0, 4));
+            tmp[(isMajor ? 6 : 1)] += "#";
+        } else {
+            tmp = tmp.slice(3, 7).concat(tmp.slice(0, 3));
+            tmp[(isMajor ? 3 : 5)] += "b";
+        }
     }
-
-    get sharpIntervalName() {
-        return intervalNames[this.index_].sharpKeyName + this.chordType_;
-    };
-
-    get flatIntervalName() {
-        return intervalNames[this.index_].flatKeyName + this.chordType_;
-    };
-
-    sharpChordName(rootIndex) {
-        return rootNames[mod12(this.index_ + rootIndex)].sharpKeyName + this.chordType_;
-    };
-
-    flatChordName(rootIndex) {
-        return rootNames[mod12(this.index_ + rootIndex)].flatKeyName + this.chordType_;
-    };
-};
-
-const majorScale = [
-    new ScaleChord(0, "M7"),
-    new ScaleChord(2, "m7"),
-    new ScaleChord(4, "m7"),
-    new ScaleChord(5, "M7"),
-    new ScaleChord(7, "7"),
-    new ScaleChord(9, "m7"),
-    new ScaleChord(11, "m7-5"),
-];
-
-const naturalMinorScale = [
-    new ScaleChord(0, "m7"),
-    new ScaleChord(2, "m7-5"),
-    new ScaleChord(3, "M7"),
-    new ScaleChord(5, "m7"),
-    new ScaleChord(7, "m7"),
-    new ScaleChord(8, "M7"),
-    new ScaleChord(10, "7"),
-];
-
-const setKey = (key, rootIndex, isMajor) => {
-    const keyName = rootNames[rootIndex].sharpKeyName + (isMajor ? "" : "m");
-    key.find(".key-name-box").text(keyName);
-    var cb = key.find(".chords-box");
     
-    var scale = (isMajor ? majorScale : naturalMinorScale);
+    return tmp;
+}
+
+class Scale
+{
+    // key1のみを渡した場合: 異名同音調なし
+    // key1, key2両方を渡した場合
+    //    * key1 = DisplayMode::kSharpで表示する調
+    //    * key2 = DisplayMode::kFlatで表示する調
+    constructor(pitches1, pitches2) {
+        this.pitches1 = pitches1;
+        this.pitches2 = pitches2 || pitches1;
+    }
+
+    pitches(display_mode = kCurrentDisplayMode) {
+        return (display_mode == DisplayMode.kSharp
+                ? this.pitches1
+                : this.pitches2
+        );
+    }
+};
+
+function makeScales(isMajor) {
+    var scales = [];
+    for(var i = 0; i < 12; ++i) {
+        if(i < 5) {
+            scales.push(new Scale(shiftScale(i, ScaleShiftDirection.kDominant, isMajor)));
+        } else if(i < 8) {
+            scales.push(new Scale(shiftScale(i, ScaleShiftDirection.kDominant, isMajor),
+                                  shiftScale(12 - i, ScaleShiftDirection.kSubdominant, isMajor)));
+        } else {
+            scales.push(new Scale(shiftScale(12 - i, ScaleShiftDirection.kSubdominant, isMajor)));
+        }
+    }
+
+    return scales;
+}
+
+const kMajorScales = makeScales(true);
+const kMinorScales = makeScales(false);
+
+const majorScaleChords = [ 
+    "M7", "m7", "m7", "M7", "7", "m7", "m7-5", 
+];
+
+const naturalMinorScaleChords = [
+    "m7", "m7-5", "M7", "m7", "m7", "M7", "7",
+];
+
+const setKey = (targetDom, rootIndex, isMajor) => {
+    const scale = (isMajor ? kMajorScales : kMinorScales)[rootIndex];
+    const chords = (isMajor ? majorScaleChords : naturalMinorScaleChords);
+
+    const keyName = scale.pitches()[0] + (isMajor ? "" : "m");
+    targetDom.find(".key-name-box").text(keyName);
+    var cb = targetDom.find(".chords-box");
 
     var text1 = "", text2 = "";
     for(var i = 0; i < 4; ++i) {
-        text1 += scale[i].sharpChordName(rootIndex);
+        text1 += scale.pitches()[i] + chords[i];
         text1 += (i == 3 ? "" : " ");
     }
 
     for(var i = 4; i < 7; ++i) {
-        text2 += scale[i].sharpChordName(rootIndex);
+        text2 += scale.pitches()[i] + chords[i];
         text2 += (i == 6 ? "" : " ");
     }
 
-    var cblines = cb.find(".chords-line");
+    var cblines = $(".chords-line", cb);
     cblines.eq(0).text(text1);
     cblines.eq(1).text(text2);
 };
@@ -117,28 +112,30 @@ const setKey = (key, rootIndex, isMajor) => {
 const changeTargetKey = (keyName) => {
     keyName = "" + keyName;
     var isMajor = keyName.endsWith("m") == false;
+    var scales = (isMajor ? kMajorScales : kMinorScales);
 
-    var majorKey = keyName.replace("m", "");
-    var index = rootNames.findIndex(function(elem) {
-        return elem.sharpKeyName == majorKey ||
-               elem.flatKeyName == majorKey;
+    var pitch = keyName.replace("m", "");
+
+    var index = scales.findIndex(function(elem) {
+        return elem.pitches(DisplayMode.kSharp)[0] == pitch ||
+               elem.pitches(DisplayMode.kFlat)[0] == pitch;
     });
 
     if(index === -1) { return; }
 
-    var toRelative = (isMajor ? 9 : 3);
+    var toParallel = (isMajor ? 9 : 3);
 
-    setKey($("#key1"), mod12(index + 7), !isMajor);
-    setKey($("#key2"), mod12(index + 7), isMajor);
-    setKey($("#key3"), mod12(index + 7 + toRelative), !isMajor);
+    setKey($("#key1"), mod12(index + 1 + toParallel), !isMajor);
+    setKey($("#key2"), mod12(index + 1), isMajor);
+    setKey($("#key3"), mod12(index + 1), !isMajor);
 
-    setKey($("#key4"), mod12(index + 0), !isMajor);
+    setKey($("#key4"), mod12(index + 0 + toParallel), !isMajor);
     setKey($("#key5"), mod12(index + 0), isMajor);
-    setKey($("#key6"), mod12(index + toRelative), !isMajor);
+    setKey($("#key6"), mod12(index + 0), !isMajor);
 
-    setKey($("#key7"), mod12(index + 5), !isMajor);
-    setKey($("#key8"), mod12(index + 5), isMajor);
-    setKey($("#key9"), mod12(index + 5 + toRelative), !isMajor);
+    setKey($("#key7"), mod12(index + 11 + toParallel), !isMajor);
+    setKey($("#key8"), mod12(index + 11), isMajor);
+    setKey($("#key9"), mod12(index + 11), !isMajor);
 };
 
 $(function(){
