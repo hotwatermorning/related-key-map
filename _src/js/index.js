@@ -109,7 +109,7 @@ const setKey = (targetDom, rootIndex, isMajor) => {
     cblines.eq(1).text(text2);
 };
 
-const changeTargetKey = (keyName) => {
+function changeTargetKey(keyName) {
     keyName = "" + keyName;
     var isMajor = keyName.endsWith("m") == false;
     var scales = (isMajor ? kMajorScales : kMinorScales);
@@ -138,11 +138,39 @@ const changeTargetKey = (keyName) => {
     setKey($("#key9"), mod12(index + 11), !isMajor);
 };
 
+function setDetailedKey(keyName)
+{
+    keyName = "" + keyName;
+    const isMajor = keyName.endsWith("m") == false;
+    const scales = (isMajor ? kMajorScales : kMinorScales);
+    const chords = (isMajor ? majorScaleChords : naturalMinorScaleChords);
+
+    const pitch = keyName.replace("m", "");
+
+    const index = scales.findIndex(function(elem) {
+        return elem.pitches(DisplayMode.kSharp)[0] == pitch ||
+               elem.pitches(DisplayMode.kFlat)[0] == pitch;
+    });
+
+    if(index === -1) { return; }
+
+    const scale = scales[index];
+
+    $(".key-detail-heading > .key-title").text(keyName);
+
+    var cd = $(".chord-detail");
+
+    for(var i = 0; i < 7; ++i) {
+        cd.eq(i).text(scale.pitches()[i] + chords[i]);
+    }
+}
+
 $(function(){
     var ex = $(".expand-image");
     ex.on('click', function(e) {
         e.stopPropagation();
-        console.log("Show Key Detail!");
+        const target_name_box = $(".key-name-box", $(e.delegateTarget).parent());
+        setDetailedKey(target_name_box.text());
         ps.modal({
             content: "<div>" + $(".key-detail-box").html() + "</div>",
             className: "key-detail-box"
