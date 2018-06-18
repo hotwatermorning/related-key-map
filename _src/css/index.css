@@ -6,19 +6,38 @@
   --expand-image-size: 40px;
 }
 
-body {
-  background-color: hsl(0, 10%, 20%);
+html {
+  overflow: auto;
 }
 
-.title-box
-{
-  width: 100%;
-  font-family: var(--font-family), serif;
-  color: #FFFFFF;
-  margin: 10px;
+body {
+  overflow: hidden;
+  background-color: hsl(0, 10%, 20%);
+  margin: 0px;
+  min-width: 950px;
+}
+
+.header-box {
+  margin-left: -500%;
+	margin-right: -500%;
+	padding-left: 500%;
+	padding-right: 500%;
+  margin-bottom: 60px;
+  background-color: hsl(0, 10%, 10%);
+}
+
+.header-text-box {
+  height: 90px;
+  line-height: 90px;
+  padding: 0px 30px 0px;
+  vertical-align: middle;
+  color: hsl(0, 100%, 100%);
 
   h1 {
+    font-family: var(--font-family), serif;
     font-weight: normal;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
   }
 }
 
@@ -122,7 +141,7 @@ body {
   text-align: center;
   font-family: var(--font-family), serif;
   /* border: solid 2px rgb(64, 185, 124); */
-  font-size: 20px;
+  font-size: 19px;
   box-sizing: border-box;
 }
 
@@ -197,4 +216,80 @@ body {
 .arrow-padding-mid {
   width: 240px;
   height: 90px;
+}
+
+.key-detail {
+  background-color: hsl(50, 25%, 60%);
+  width: 720px;
+  height: 480px;
+  border-radius: 20px;
+  border: solid 6px hsl(110, 30%, 30%);
+  box-sizing: border-box;
+}
+
+.key-detail-heading {
+  width: inherit;
+  height: 140px;
+  display: flex;
+}
+
+.key-title {
+  height: 75px;
+  width: calc(240px - var(--expand-image-size) * 2);
+  text-align: center;
+  font-size: 50px;
+  font-family: var(--font-family), serif;
+  color: #FFFFFF;
+  float: none;
+  position: relative;
+}
+
+.key-description {
+  width: 400px;
+  height: inherit;
+  border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box;
+}
+
+.staff-box {
+  width: 560px;
+  height: 175px;
+  border: solid 1px hsl(120, 30%, 30%);
+  box-sizing: border-box;
+}
+
+.staff {
+
+}
+
+.detailed-chords-box {
+  width: 560px;
+  height: 100px;
+
+  position: relative;
+  border: solid 1px hsl(10, 30%, 30%);
+  box-sizing: border-box;
+  display: flex;
+}
+
+.chord-detail {
+  width: 80px;
+  height: 50px;
+  border: solid 1px hsl(50, 30%, 30%);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.footer-box {
+  margin: 60px 0px 0px;
+  background-color: hsl(0, 10%, 10%);
+  text-align: center;
+}
+
+.footer-text-box {
+  display: inline-block;
+  height: 60px;
+  line-height: 60px;
+  vertical-align: middle;
+  color: hsl(0, 100%, 100%);
 }

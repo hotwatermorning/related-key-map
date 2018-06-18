@@ -1,27 +1,21 @@
 extends layout
 
 mixin key(key_name, chords, style)
-  div(class!=attributes.class)
-    img(src="../images/expand.png").expand-image
+  div(class!=attributes.class, id!=attributes.id)
+    img.expand-image
     .key-name-box
-      = key_name
     .chords-box
-      - var tmp = chords.concat([" ", " ", " ", " ", " ", " ", " "])
-      - var line1 = tmp.slice(0, 4).join(" ")
-      - var line2 = tmp.slice(4, 7).join(" ")
       .chords-line
-        = line1
       .chords-line
-        = line2
 
-mixin tonic-key(key_name, chords)
-  +key(key_name, chords)(class="tonic-key")
+mixin tonic-key(id)
+  +key(id=id, class="tonic-key")
 
-mixin directly-related-key(key_name, chords)
-  +key(key_name, chords)(class="directly-related-key")
+mixin directly-related-key(id)
+  +key(id=id, class="directly-related-key")
 
-mixin indirectly-related-key(key_name, chords)
-  +key(key_name, chords)(class="indirectly-related-key")
+mixin indirectly-related-key(id)
+  +key(id=id, class="indirectly-related-key")
 
 mixin dominant-arrow
   .arrow-box
@@ -63,26 +57,44 @@ mixin right-arrow
     .right-arrow
 
 block content
-  div.title-box
-    h1= title
+  .header-box
+    .header-text-box
+      h1= title
   .key-container
     .key-row
-      +indirectly-related-key("G#m", ["C#m", "D#m7", "Fm7", "F#M7", "       G#7", "A#m7", "Cm7-5"])
+      +indirectly-related-key("key1")
       +left-arrow
-      +directly-related-key("G", ["G", "Dm7"])
+      +directly-related-key("key2")
       +right-arrow
-      +indirectly-related-key("Em", ["Em", "Dm7"])
+      +indirectly-related-key("key3")
     +dominant-arrow-row
-    .key-row
-      +directly-related-key("Cm", ["Cm", "Dm7"])
+    .key-row#tonic_key_row
+      +directly-related-key("key4")
       +left-arrow
-      +tonic-key("C", ["C", "Dm7"])
+      +tonic-key("key5")
       +right-arrow
-      +directly-related-key("Am", ["Am", "Dm7"])
+      +directly-related-key("key6")
     +subdominant-arrow-row
-    .key-row
-      +indirectly-related-key("Fm", ["Fm", "Dm7"])
+    .key-row#subdominant_key_row
+      +indirectly-related-key("key7")
       +left-arrow
-      +directly-related-key("F", ["F", "Dm7"])
+      +directly-related-key("key8")
       +right-arrow
-      +indirectly-related-key("Dm", ["Dm", "Dm7"])
+      +indirectly-related-key("key9")
+  .key-detail-box(style={display: "none"})
+    .key-detail
+      .key-detail-heading
+        .key-title= "G#m"
+        .key-description= "嬰ト長調 asaklasdfjoijlkajkjlkjaoisjbd"
+      .staff-box
+        .staff
+      .detailed-chords-box
+        .chord-detail= "CM7"
+        .chord-detail= "Dm7"
+        .chord-detail= "Em7"
+        .chord-detail= "FM7"
+        .chord-detail= "G7"
+        .chord-detail= "Am7"
+        .chord-detail= "Bm7-5"
+  .footer-box
+    .footer-text-box= "hotwatermorning@gmail.com"
