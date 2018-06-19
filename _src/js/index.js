@@ -186,6 +186,7 @@ function setDetailedKey(keyName, staff, context)
     var cd = $(".chord-detail");
 
     var notes = [];
+    var notes2 = [];
     var lastRootPitchIndex = 0;
     var rootOctave = (kPitchIndex[scale.pitches()[0]] < kPitchIndex["Ab"]) ? 4 : 3;
     for(var i = 0; i < 7; ++i) {
@@ -204,8 +205,8 @@ function setDetailedKey(keyName, staff, context)
         var fifthOctave = thirdOctave + (kPitchIndex[third] > kPitchIndex[fifth])
         var seventhOctave = fifthOctave + (kPitchIndex[fifth] > kPitchIndex[seventh]);
 
-
-        cd.eq(i).text(scale.pitches()[i] + chords[i]);
+        const chordName = scale.pitches()[i] + chords[i];
+        cd.eq(i).text(chordName);
 
         var tetrad = new VF.StaveNote({
             clef: "treble",
@@ -219,19 +220,44 @@ function setDetailedKey(keyName, staff, context)
          });
 
          notes.push(tetrad);
+         
+         var text = new VF.TextNote({
+            text: chordName,
+            duration: "h",
+            line: 12,
+            font: {
+                 family: "Serif",
+                 size: 12,
+                 weight: ""
+            },
+         });
+         text.setJustification(VF.TextNote.Justification.RIGHT);
+
+         notes2.push(text);
     }
 
-    var voice = new VF.Voice({num_beats: 7,  beat_value: 2}); 
+    notes.forEach(function(note) {note.setContext(context)});
+    notes2.forEach(function(note) {note.setContext(context)});
+
+    var voice = new VF.Voice({num_beats: 7, beat_value: 2}); 
+    var voice2 = new VF.Voice({num_beats: 7, beat_value: 2});
+
     voice.addTickables(notes);
+    voice2.addTickables(notes2);
+
     staff.setKeySignature(keyName);
     staff.format();
+    staff.setContext(context);
 
-    var formatter = new VF.Formatter().joinVoices([voice]).formatToStave([voice], staff);
+    // VF.Test.TextNote.renderNotes(notes1, notes2, ctx, stave);
+
+    var formatter = new VF.Formatter().joinVoices([voice, voice2]).formatToStave([voice, voice2], staff);
 
     context.clear();
 
-    staff.setContext(context).draw();
+    staff.draw();
     voice.draw(context, staff);
+    voice2.draw(context, staff);
 }
 
 $(() => {
