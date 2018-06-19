@@ -2,7 +2,8 @@ extends layout
 
 mixin key(key_name, chords, style)
   div(class!=attributes.class, id!=attributes.id)
-    img.expand-image
+    a(href="#inline" class="inline")
+      img.expand-image
     .key-name-box
     .chords-box
       .chords-line
@@ -81,20 +82,12 @@ block content
       +directly-related-key("key8")
       +right-arrow
       +indirectly-related-key("key9")
-  .key-detail-box(style={display: "none"})
+  .key-detail-box#inline(style={display: "none"})
     .key-detail
       .key-detail-heading
         .key-title= ""
         .key-description= "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       .staff-box
         .staff#staff
-      .detailed-chords-box
-        .chord-detail= ""
-        .chord-detail= ""
-        .chord-detail= ""
-        .chord-detail= ""
-        .chord-detail= ""
-        .chord-detail= ""
-        .chord-detail= ""
   .footer-box
     .footer-text-box= "hotwatermorning@gmail.com"

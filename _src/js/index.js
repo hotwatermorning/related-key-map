@@ -1,9 +1,8 @@
-import "../css/index.css";
-import "../../node_modules/popups/css/popupS.css";
 import expand_image from "../images/expand.png";
-const ps = require("../../node_modules/popups/dist/popupS.js");
-const $ = require("jquery");
+require("modaal/dist/js/modaal.js");
+import "modaal/dist/css/modaal.css"
 var VF = require("vexflow").Flow;
+import "../css/index.css";
 
 const mod12 = n => { return n % 12; };
 
@@ -231,7 +230,7 @@ function setDetailedKey(keyName, staff, context)
                  weight: ""
             },
          });
-         text.setJustification(VF.TextNote.Justification.RIGHT);
+         text = text.setJustification(VF.TextNote.Justification.RIGHT);
 
          notes2.push(text);
     }
@@ -274,21 +273,28 @@ $(() => {
 });
 
 $(window).on("load", () => {
-    var staffDom = $("#staff");
-    var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-    renderer.resize(staffDom.width(), staffDom.height());
-
-    var context = renderer.getContext();
-    var st = new VF.Stave(10, 30, staffDom.width() - 20);
-    st.addClef("treble");
-
-    $(".expand-image").on('click', function(e) {
+    $(".inline").on('click', function(e) {
         e.stopPropagation();
         const target_name_box = $(".key-name-box", $(e.delegateTarget).parent());
+
+        var popup_width = $(window).width() * 0.95;
+        if(popup_width > 950) { popup_width = 950; }
+        $(".modaal-container").width(popup_width);
+
+        var staffDom = $("#staff");
+        staffDom.width(popup_width);
+        var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
+        renderer.resize(staffDom.width(), staffDom.height());
+
+        // 現在は、毎回Staveが追加されてしまうっぽい。
+        // 毎回リセットするようにする
+        var context = renderer.getContext();
+        var st = new VF.Stave(10, 30, staffDom.width() - 20);
+        st.addClef("treble");
+
         setDetailedKey(target_name_box.text(), st, context);
-        ps.modal({
-            content: "<div>" + $(".key-detail-box").html() + "</div>",
-            className: "key-detail-box"
-        });
+    });
+    $(".inline").modaal({
+        animation_speed: 200
     });
 });

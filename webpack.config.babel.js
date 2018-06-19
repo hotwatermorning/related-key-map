@@ -1,5 +1,4 @@
 import webpack from "webpack";
-import ExtractTextPlugin from "extract-text-webpack-plugin"; // need for writing CSS files.
 
 module.exports = [{
     entry: {
@@ -34,6 +33,12 @@ module.exports = [{
         }
       }]
     },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery'
+      })
+    ],
     devtool: "inline-source-map"
     // resolve: {
     //   moduleDirectories
