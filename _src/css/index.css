@@ -141,7 +141,7 @@ body {
   text-align: center;
   font-family: var(--font-family), serif;
   /* border: solid 2px rgb(64, 185, 124); */
-  font-size: 19px;
+  font-size: 18px;
   box-sizing: border-box;
 }
 
@@ -259,7 +259,8 @@ body {
 }
 
 .staff {
-
+  width: inherit;
+  height: inherit;
 }
 
 .detailed-chords-box {

@@ -3,6 +3,7 @@ import "../../node_modules/popups/css/popupS.css";
 import expand_image from "../images/expand.png";
 const ps = require("../../node_modules/popups/dist/popupS.js");
 const $ = require("jquery");
+var VF = require("vexflow").Flow;
 
 const mod12 = n => { return n % 12; };
 
@@ -138,7 +139,31 @@ function changeTargetKey(keyName) {
     setKey($("#key9"), mod12(index + 11), !isMajor);
 };
 
-function setDetailedKey(keyName)
+const kPitchIndex = {
+    "C": 0,
+    "C#": 1,
+    "Db": 1,
+    "D": 2,
+    "D#": 3,
+    "Eb": 3,
+    "E": 4,
+    "Fb": 4,
+    "E#": 5,
+    "F": 5,
+    "F#": 6,
+    "Gb": 6,
+    "G": 7,
+    "G#": 8,
+    "Ab": 8,
+    "A": 9,
+    "A#": 10,
+    "Bb": 10,
+    "B": 11,
+    "Cb": 11,
+    "B#": 12,
+};
+
+function setDetailedKey(keyName, staff, context)
 {
     keyName = "" + keyName;
     const isMajor = keyName.endsWith("m") == false;
@@ -160,23 +185,57 @@ function setDetailedKey(keyName)
 
     var cd = $(".chord-detail");
 
+    var notes = [];
+    var lastRootPitchIndex = 0;
+    var rootOctave = (kPitchIndex[scale.pitches()[0]] < kPitchIndex["Ab"]) ? 4 : 3;
     for(var i = 0; i < 7; ++i) {
+        var root = scale.pitches()[i];
+        var third = scale.pitches()[(i + 2) % 7];
+        var fifth = scale.pitches()[(i + 4) % 7];
+        var seventh = scale.pitches()[(i + 6) % 7];
+
+        // オクターブを正確に扱えるようにする。
+        if(lastRootPitchIndex > kPitchIndex[root]) {
+            rootOctave += 1;
+        }
+        lastRootPitchIndex = kPitchIndex[root];
+
+        var thirdOctave = rootOctave + (kPitchIndex[root] > kPitchIndex[third]);
+        var fifthOctave = thirdOctave + (kPitchIndex[third] > kPitchIndex[fifth])
+        var seventhOctave = fifthOctave + (kPitchIndex[fifth] > kPitchIndex[seventh]);
+
+
         cd.eq(i).text(scale.pitches()[i] + chords[i]);
+
+        var tetrad = new VF.StaveNote({
+            clef: "treble",
+            keys: [
+                `${root.toLowerCase()}/${rootOctave}`,
+                `${third.toLowerCase()}/${thirdOctave}`,
+                `${fifth.toLowerCase()}/${fifthOctave}`,
+                `${seventh.toLowerCase()}/${seventhOctave}`,
+            ], 
+            duration: "h"
+         });
+
+         notes.push(tetrad);
     }
+
+    var voice = new VF.Voice({num_beats: 7,  beat_value: 2}); 
+    voice.addTickables(notes);
+    staff.setKeySignature(keyName);
+    staff.format();
+
+    var formatter = new VF.Formatter().joinVoices([voice]).formatToStave([voice], staff);
+
+    context.clear();
+
+    staff.setContext(context).draw();
+    voice.draw(context, staff);
 }
 
-$(function(){
-    var ex = $(".expand-image");
-    ex.on('click', function(e) {
-        e.stopPropagation();
-        const target_name_box = $(".key-name-box", $(e.delegateTarget).parent());
-        setDetailedKey(target_name_box.text());
-        ps.modal({
-            content: "<div>" + $(".key-detail-box").html() + "</div>",
-            className: "key-detail-box"
-        });
-    });
-    ex.attr("src", expand_image);
+$(() => {
+    $(".expand-image").attr("src", expand_image);
 
     for(var i = 1; i <= 9; ++i) {
         $(`#key${i}`).on("click", function(e) {
@@ -186,4 +245,24 @@ $(function(){
     }
 
     changeTargetKey("C");
+});
+
+$(window).on("load", () => {
+    var staffDom = $("#staff");
+    var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
+    renderer.resize(staffDom.width(), staffDom.height());
+
+    var context = renderer.getContext();
+    var st = new VF.Stave(10, 30, staffDom.width() - 20);
+    st.addClef("treble");
+
+    $(".expand-image").on('click', function(e) {
+        e.stopPropagation();
+        const target_name_box = $(".key-name-box", $(e.delegateTarget).parent());
+        setDetailedKey(target_name_box.text(), st, context);
+        ps.modal({
+            content: "<div>" + $(".key-detail-box").html() + "</div>",
+            className: "key-detail-box"
+        });
+    });
 });
