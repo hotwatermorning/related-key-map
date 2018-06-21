@@ -265,6 +265,8 @@ body {
 
 .staff {
   margin: auto;
+  width: 660px;
+  height: 175px;
 }
 
 .footer-box {

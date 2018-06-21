@@ -182,8 +182,6 @@ function setDetailedKey(keyName, staff, context)
 
     $(".key-detail-heading > .key-title").text(keyName);
 
-    var cd = $(".chord-detail");
-
     var notes = [];
     var notes2 = [];
     var lastRootPitchIndex = 0;
@@ -205,7 +203,7 @@ function setDetailedKey(keyName, staff, context)
         var seventhOctave = fifthOctave + (kPitchIndex[fifth] > kPitchIndex[seventh]);
 
         const chordName = scale.pitches()[i] + chords[i];
-        cd.eq(i).text(chordName);
+        // cd.eq(i).text(chordName);
 
         var tetrad = new VF.StaveNote({
             clef: "treble",
@@ -248,15 +246,15 @@ function setDetailedKey(keyName, staff, context)
     staff.format();
     staff.setContext(context);
 
-    // VF.Test.TextNote.renderNotes(notes1, notes2, ctx, stave);
+    context.clear();
 
     var formatter = new VF.Formatter().joinVoices([voice, voice2]).formatToStave([voice, voice2], staff);
-
-    context.clear();
 
     staff.draw();
     voice.draw(context, staff);
     voice2.draw(context, staff);
+
+    staff.setContext(undefined);
 }
 
 $(() => {
@@ -271,29 +269,27 @@ $(() => {
 
     changeTargetKey("C");
 
-    var staffDom = $("#staff");
-    var st = new VF.Stave(0, 30, 0);
-    st.addClef("treble");
-    var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-    var target_key_name = "";
-
     $(window).on("load", () => {
-        staffDom.width(staffDom.parent().width());
-        staffDom.height(staffDom.parent().height());
-        renderer.resize(staffDom.width(), staffDom.height());
-    });
+        $(".inline").modaal({
+            animation_speed: 200,
+            width: 720,
+            height: 480,
+            before_open: function(e) {
+                e.stopPropagation();
 
-    $(".inline").on('click', function(e) {
-        e.stopPropagation();
-        target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
+                var staffDom = $("#staff");
+                $("svg", staffDom).remove();
+                var st = new VF.Stave(0, 30, 0);
+                st.setWidth(staffDom.width());
+                st.addClef("treble");
+                var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
-        var context = renderer.getContext();
-        setDetailedKey(target_key_name, st, context);
-    });
+                var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
+                renderer.resize(staffDom.width(), staffDom.height());
 
-    $(".inline").modaal({
-        animation_speed: 200,
-        width: 720,
-        height: 480,
+                var context = renderer.getContext();
+                setDetailedKey(target_key_name, st, context);
+            },
+        });
     });
 });
