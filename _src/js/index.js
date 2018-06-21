@@ -270,31 +270,30 @@ $(() => {
     }
 
     changeTargetKey("C");
-});
 
-$(window).on("load", () => {
+    var staffDom = $("#staff");
+    var st = new VF.Stave(0, 30, 0);
+    st.addClef("treble");
+    var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
+    var target_key_name = "";
+
+    $(window).on("load", () => {
+        staffDom.width(staffDom.parent().width());
+        staffDom.height(staffDom.parent().height());
+        renderer.resize(staffDom.width(), staffDom.height());
+    });
+
     $(".inline").on('click', function(e) {
         e.stopPropagation();
-        const target_name_box = $(".key-name-box", $(e.delegateTarget).parent());
+        target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
-        var popup_width = $(window).width() * 0.95;
-        if(popup_width > 950) { popup_width = 950; }
-        $(".modaal-container").width(popup_width);
-
-        var staffDom = $("#staff");
-        staffDom.width(popup_width);
-        var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-        renderer.resize(staffDom.width(), staffDom.height());
-
-        // 現在は、毎回Staveが追加されてしまうっぽい。
-        // 毎回リセットするようにする
         var context = renderer.getContext();
-        var st = new VF.Stave(10, 30, staffDom.width() - 20);
-        st.addClef("treble");
-
-        setDetailedKey(target_name_box.text(), st, context);
+        setDetailedKey(target_key_name, st, context);
     });
+
     $(".inline").modaal({
-        animation_speed: 200
+        animation_speed: 200,
+        width: 720,
+        height: 480,
     });
 });

@@ -228,18 +228,21 @@ body {
 }
 
 .key-title {
-  height: 15%;
+  height: 60px;
   width: calc(240px - var(--expand-image-size) * 2);
-  text-align: center;
-  font-size: 10px;
+  text-align: left;
+  font-size: 50px;
+  line-height: 60px;
   font-family: var(--font-family), serif;
   color: #FFFFFF;
   float: none;
   position: relative;
+  border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box;
+  min-width: 130px;
 }
 
 .key-description {
-  width: 400px;
   height: inherit;
   border: solid 1px hsl(90, 30%, 30%);
   box-sizing: border-box;
@@ -247,20 +250,20 @@ body {
 
 .key-detail {
   height: inherit;
-  width: inherit;
   margin: auto;
 }
 
 .staff-box {
+  width: 660px;
   height: 175px;
-  width: inherit;
   margin: auto;
   background-color: hsl(220, 10%, 75%);
+
+  border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box;
 }
 
 .staff {
-  height: inherit;
-  width: 100%;
   margin: auto;
 }
 
@@ -302,7 +305,6 @@ body {
 .modaal-container {
   border-radius: 20px;
   background-color: hsl(220, 10%, 75%);
-  height: 300px;
 }
 
 .modaal-wrapper .modaal-close {
