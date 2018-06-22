@@ -23,7 +23,14 @@ module.exports = (env, args) => {
         }],
       },{
         test: /\.css$/,
-        use: [ "style-loader", "postcss-loader" ]
+        use: [
+          {
+            loader: "style-loader"
+          }, {
+            loader: "postcss-loader",
+            options: { config: { path: "./postcss.config.js" } }
+          }
+        ]
       },{
         test: /\.(jpe?g|png|gif|svg|ico)(\?.+)?$/,
         use: {
