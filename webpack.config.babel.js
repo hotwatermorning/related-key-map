@@ -1,6 +1,7 @@
 import webpack from "webpack";
 
-module.exports = [{
+module.exports = (env, args) => {
+  return {
     entry: {
       index : __dirname + "/_src/js/index.js"
     },
@@ -39,8 +40,9 @@ module.exports = [{
         jQuery: 'jquery'
       })
     ],
-    devtool: "inline-source-map"
-    // resolve: {
-    //   moduleDirectories
-    // }
-  }];
+  };
+};
+
+if (process.env.NODE_ENV !== 'production') {
+  module.exports.devtool = 'inline-source-map';
+}
