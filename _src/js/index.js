@@ -12,7 +12,7 @@ const DisplayMode = {
     kFlat: 1
 };
 
-const kCurrentDisplayMode = DisplayMode.kSharp;
+var kCurrentDisplayMode = DisplayMode.kSharp;
 
 const ScaleShiftDirection = {
     kDominant: 0,
@@ -85,12 +85,25 @@ const naturalMinorScaleChords = [
     "m7", "m7-5", "M7", "m7", "m7", "M7", "7",
 ];
 
+const kEnharmonicKeys = [
+    "B", "Cb", 
+    "F#", "Gb", 
+    "C#", "Db", 
+    "G#m", "Abm", 
+    "D#m", "Ebm", 
+    "A#m", "Bbm"
+];
+
 const setKey = (targetDom, rootIndex, isMajor) => {
     const scale = (isMajor ? kMajorScales : kMinorScales)[rootIndex];
     const chords = (isMajor ? majorScaleChords : naturalMinorScaleChords);
 
     const keyName = scale.pitches()[0] + (isMajor ? "" : "m");
     targetDom.find(".key-name-box").text(keyName);
+
+    const display_mode = (kEnharmonicKeys.indexOf(keyName) != -1 ? "visible" : "hidden");
+    targetDom.find(".switch-display-mode").css("visibility", display_mode);
+
     var cb = targetDom.find(".chords-box");
 
     var text1 = "", text2 = "";
@@ -267,6 +280,13 @@ $(() => {
     }
 
     changeTargetKey("C");
+
+    $(".switch-display-mode").on("click", e => {
+        e.stopPropagation();
+        const currentTargetKey = $(".tonic-key > .key-name-box").text();
+        kCurrentDisplayMode = 1 - kCurrentDisplayMode;
+        changeTargetKey(currentTargetKey);
+    });
 });
 
 $(window).on("load", () => {
