@@ -76,12 +76,11 @@ body {
 %key-box-base {
   height: 140px;
   width: 240px;
-  /* font-weight: bold; */
   display: block;
   box-sizing: border-box;
   border-radius: 20px;
-  /* background-color: hsl(120, 50%, 50%); */
   transition: all .3s;
+  position: relative;
 
   &:before, &:after {
     transition: all .3s;
@@ -114,7 +113,6 @@ body {
   text-align: center;
   font-size: 50px;
   font-family: var(--font-family), serif;
-  /* border: solid 2px #30FFCC; */
   box-sizing: border-box;
   float: none;
   position: relative;
@@ -131,6 +129,20 @@ body {
   /* top: -10px;
   left: 10px; */
   /* transfrom: translate(20px, -20px); */
+}
+
+.switch-display-mode {
+  visibility: hidden;
+  width: 60px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border-radius: 20px;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 75%);
 }
 
 .chords-box {
