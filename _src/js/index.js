@@ -279,7 +279,7 @@ $(window).on("load", () => {
 
             var staffDom = $("#staff");
             $("svg", staffDom).remove();
-            var st = new VF.Stave(0, 30, 0);
+            var st = new VF.Stave(0, 30, 0, { fill_style: "#444444" });
             st.setWidth(staffDom.width());
             st.addClef("treble");
             var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
