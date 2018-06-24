@@ -268,28 +268,28 @@ $(() => {
     }
 
     changeTargetKey("C");
+});
 
-    $(window).on("load", () => {
-        $(".inline").modaal({
-            animation_speed: 200,
-            width: 720,
-            height: 480,
-            before_open: function(e) {
-                e.stopPropagation();
+$(window).on("load", () => {
+    $(".inline").modaal({
+        animation_speed: 200,
+        width: 720,
+        height: 480,
+        before_open: function(e) {
+            e.stopPropagation();
 
-                var staffDom = $("#staff");
-                $("svg", staffDom).remove();
-                var st = new VF.Stave(0, 30, 0);
-                st.setWidth(staffDom.width());
-                st.addClef("treble");
-                var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
+            var staffDom = $("#staff");
+            $("svg", staffDom).remove();
+            var st = new VF.Stave(0, 30, 0);
+            st.setWidth(staffDom.width());
+            st.addClef("treble");
+            var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
-                var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-                renderer.resize(staffDom.width(), staffDom.height());
+            var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
+            renderer.resize(staffDom.width(), staffDom.height());
 
-                var context = renderer.getContext();
-                setDetailedKey(target_key_name, st, context);
-            },
-        });
+            var context = renderer.getContext();
+            setDetailedKey(target_key_name, st, context);
+        },
     });
 });
