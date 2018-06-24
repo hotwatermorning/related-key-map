@@ -309,6 +309,14 @@ body {
   background-color: hsl(220, 10%, 75%);
 }
 
+/*
+ A workaround for a bug that the close button disappears on iPhone.
+ https://stackoverflow.com/questions/8110580/ios5-images-disappear-when-scrolling-with-webkit-overflow-scrolling-touch
+ */
+.modaal-wrapper {
+  -webkit-transform: translateZ(0);
+}
+
 .modaal-wrapper .modaal-close {
   width: 40px;
   height: 40px;
