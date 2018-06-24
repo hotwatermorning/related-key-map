@@ -152,6 +152,7 @@ function changeTargetKey(keyName) {
 };
 
 const kPitchIndex = {
+    "Cb": -1,
     "C": 0,
     "C#": 1,
     "Db": 1,
@@ -171,7 +172,6 @@ const kPitchIndex = {
     "A#": 10,
     "Bb": 10,
     "B": 11,
-    "Cb": 11,
     "B#": 12,
 };
 
@@ -198,7 +198,7 @@ function setDetailedKey(keyName, staff, context)
     var notes = [];
     var notes2 = [];
     var lastRootPitchIndex = 0;
-    var rootOctave = (kPitchIndex[scale.pitches()[0]] < kPitchIndex["G"]) ? 4 : 3;
+    var rootOctave = ((kPitchIndex[scale.pitches()[0]] + 12) % 12 < kPitchIndex["G"]) ? 4 : 3;
     for(var i = 0; i < 7; ++i) {
         var root = scale.pitches()[i];
         var third = scale.pitches()[(i + 2) % 7];
