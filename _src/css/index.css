@@ -237,15 +237,15 @@ body {
   color: #FFFFFF;
   float: none;
   position: relative;
-  border: solid 1px hsl(90, 30%, 30%);
-  box-sizing: border-box;
+  /* border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box; */
   min-width: 130px;
 }
 
 .key-description {
   height: inherit;
-  border: solid 1px hsl(90, 30%, 30%);
-  box-sizing: border-box;
+  /* border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box; */
 }
 
 .key-detail {
@@ -255,18 +255,18 @@ body {
 
 .staff-box {
   width: 660px;
-  height: 175px;
+  height: 180px;
   margin: auto;
   background-color: hsl(220, 10%, 75%);
 
-  border: solid 1px hsl(90, 30%, 30%);
-  box-sizing: border-box;
+  /* border: solid 1px hsl(90, 30%, 30%);
+  box-sizing: border-box; */
 }
 
 .staff {
   margin: auto;
   width: 660px;
-  height: 175px;
+  height: 180px;
 }
 
 .footer-box {
@@ -282,27 +282,6 @@ body {
   vertical-align: middle;
   color: hsl(0, 100%, 100%);
 }
-
-/* .popupS-layer.popupS-open {
-  background-color: hsl(50, 25%, 75%);
-  border-radius: 20px;
-  width: 720px;
-  height: 480px;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.popupS-layer .popupS-content {
-  width: 720px;
-  height: 480px;
-  padding: 0px;
-  background-color: hsl(50, 25%, 75%);
-  box-sizing: border-box;
-  border-radius: 20px;
-  max-width: 100%;
-  max-height: 100%;
-} */
-
 
 .modaal-container {
   border-radius: 20px;

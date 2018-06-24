@@ -273,14 +273,14 @@ $(window).on("load", () => {
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,
-        height: 480,
+        height: 300,
         before_open: function(e) {
             e.stopPropagation();
 
             var staffDom = $("#staff");
             $("svg", staffDom).remove();
             var st = new VF.Stave(0, 30, 0, { fill_style: "#444444" });
-            st.setWidth(staffDom.width());
+            st.setWidth(staffDom.width()-1);
             st.addClef("treble");
             var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
