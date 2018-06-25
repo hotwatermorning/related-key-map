@@ -1,4 +1,5 @@
 import expand_image from "../images/expand.png";
+require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
 var VF = require("vexflow").Flow;
