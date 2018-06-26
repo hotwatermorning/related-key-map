@@ -8,6 +8,7 @@ module.exports = (env, args) => {
     },
     output: {
       filename: "[name].bundle.js",
+      chunkFilename: "[name].bundle.js",
       path: path.resolve(__dirname, "public")
     },
     module: {
@@ -55,6 +56,11 @@ module.exports = (env, args) => {
   };
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+  if(!("plugins" in module.exports)) {
+    module.exports.plugins = [];
+  }
+  module.exports.plugins.push(new BundleAnalyzerPlugin());
   module.exports.devtool = 'inline-source-map';
 }

@@ -2,7 +2,13 @@ import expand_image from "../images/expand.png";
 require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
-var VF = require("vexflow").Flow;
+var VF = undefined;
+import(
+    /* webpackChunkName: "vexflow" */
+    /* webpackMode: "lazy" */
+    "vexflow/releases/vexflow-min.js").then(module => {
+    VF = module.Flow;
+});
 import "../css/index.css";
 
 const mod12 = n => { return n % 12; };
