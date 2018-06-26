@@ -129,6 +129,40 @@ const setKey = (targetDom, rootIndex, isMajor) => {
     cblines.eq(1).text(text2);
 };
 
+function getKeyFromURL()
+{
+    const url = new URL(window.location.href);
+
+    if(url.pathname.length < 2) { return ""; }
+
+    var key = url.pathname.substr(1);
+
+    if(url.hash) {
+        key += url.hash;
+    } else if(location.href.includes("#")) {
+        key += "#";
+    }
+
+    if(key.length >= 4) { return ""; }
+
+    return key;
+};
+
+function setKeyToURL(key) {
+    const sp = key.split("#");
+
+    var url = new URL(window.location.href);
+    var new_href = url.origin + "/" + sp[0];
+
+    if(sp.length >= 2) {
+        new_href += "#" + sp[1];
+    }
+
+    if(window.location.href !== new_href) {
+        window.history.pushState("", "", new_href);
+    }
+};
+
 function changeTargetKey(keyName) {
     keyName = "" + keyName;
     var isMajor = keyName.endsWith("m") == false;
@@ -156,6 +190,8 @@ function changeTargetKey(keyName) {
     setKey($("#key7"), mod12(index + 11 + toParallel), !isMajor);
     setKey($("#key8"), mod12(index + 11), isMajor);
     setKey($("#key9"), mod12(index + 11), !isMajor);
+
+    setKeyToURL($("#key5 .key-name-box").text());
 };
 
 const kPitchIndex = {
@@ -286,7 +322,7 @@ $(() => {
         });
     }
 
-    changeTargetKey("C");
+    changeTargetKey(getKeyFromURL() || "C");
 
     $(".switch-display-mode").on("click", e => {
         e.stopPropagation();
@@ -294,6 +330,10 @@ $(() => {
         kCurrentDisplayMode = 1 - kCurrentDisplayMode;
         changeTargetKey(currentTargetKey);
     });
+
+    window.onpopstate = function(event) {
+        changeTargetKey(getKeyFromURL() || "C");
+    };
 });
 
 $(window).on("load", () => {
