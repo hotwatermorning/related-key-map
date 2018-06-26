@@ -129,11 +129,11 @@ const setKey = (targetDom, rootIndex, isMajor) => {
     cblines.eq(1).text(text2);
 };
 
-function getKeyFromURL()
+function getKeyFromURL(url_string)
 {
-    const url = new URL(window.location.href);
+    const url = new URL(url_string);
 
-    if(url.pathname.length < 2) { return ""; }
+    if(url.pathname.length < 2) { return; }
 
     var key = url.pathname.substr(1);
 
@@ -143,9 +143,26 @@ function getKeyFromURL()
         key += "#";
     }
 
-    if(key.length >= 4) { return ""; }
+    if(key.length >= 4) { return; }
 
-    return key;
+    const en = kEnharmonicKeys.indexOf(key);
+
+    return {
+        key: key,
+        disp_mode: (en == -1) ? kCurrentDisplayMode : (en % 2),
+    }
+}
+
+function changeTargetKeyByURL(url_string)
+{
+    var res = getKeyFromURL(url_string);
+    if(!res) {
+        res = { key: "C", disp_mode: kCurrentDisplayMode }
+    }
+    kCurrentDisplayMode = res.disp_mode;
+    if(changeTargetKey(res.key) == false) {
+        changeTargetKey("C");
+    }
 };
 
 function setKeyToURL(key) {
@@ -163,6 +180,7 @@ function setKeyToURL(key) {
     }
 };
 
+//! キー名が無効な場合（D#メジャーなど）は、falseを返す。
 function changeTargetKey(keyName) {
     keyName = "" + keyName;
     var isMajor = keyName.endsWith("m") == false;
@@ -175,7 +193,7 @@ function changeTargetKey(keyName) {
                elem.pitches(DisplayMode.kFlat)[0] == pitch;
     });
 
-    if(index === -1) { return; }
+    if(index === -1) { return false; }
 
     var toParallel = (isMajor ? 9 : 3);
 
@@ -192,6 +210,7 @@ function changeTargetKey(keyName) {
     setKey($("#key9"), mod12(index + 11), !isMajor);
 
     setKeyToURL($("#key5 .key-name-box").text());
+    return true;
 };
 
 const kPitchIndex = {
@@ -322,7 +341,7 @@ $(() => {
         });
     }
 
-    changeTargetKey(getKeyFromURL() || "C");
+    changeTargetKeyByURL(window.location.href);
 
     $(".switch-display-mode").on("click", e => {
         e.stopPropagation();
@@ -332,7 +351,7 @@ $(() => {
     });
 
     window.onpopstate = function(event) {
-        changeTargetKey(getKeyFromURL() || "C");
+        changeTargetKeyByURL(window.location.href);
     };
 });
 
