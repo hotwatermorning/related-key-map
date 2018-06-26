@@ -1,13 +1,14 @@
-import webpack from "webpack";
+var path = require("path");
+var webpack = require("webpack");
 
 module.exports = (env, args) => {
   return {
     entry: {
-      index : __dirname + "/_src/js/index.js"
+      index : "./_src/js/index.js"
     },
     output: {
-      path: __dirname + "/public/js/",
-      filename: "[name].bundle.js"
+      filename: "[name].bundle.js",
+      path: path.resolve(__dirname, "public")
     },
     module: {
       rules: [{
@@ -33,10 +34,14 @@ module.exports = (env, args) => {
         ]
       },{
         test: /\.(jpe?g|png|gif|svg|ico)(\?.+)?$/,
+        include: [
+          path.resolve(__dirname, "_src", "images")
+        ],
         use: {
           loader: "url-loader",
           options: {
             limit: 8192,
+            name: "./images/[name].[ext]"
           }
         }
       }]
