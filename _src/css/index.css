@@ -81,6 +81,7 @@ body {
   border-radius: 20px;
   transition: all .3s;
   position: relative;
+  box-shadow: 2px 2px 3px hsl(0, 0%, 9%);
 
   &:before, &:after {
     transition: all .3s;
