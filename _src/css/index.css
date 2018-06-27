@@ -131,7 +131,7 @@ body {
   /* transfrom: translate(20px, -20px); */
 }
 
-.switch-display-mode {
+.switch-enharmonic-mode {
   visibility: hidden;
   width: 60px;
   height: 40px;

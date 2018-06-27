@@ -14,12 +14,12 @@ import "../css/index.css";
 const mod12 = n => { return n % 12; };
 
 // 異名同音調があるときの表示モード
-const DisplayMode = {
+const EnharmonicMode = {
     kSharp: 0,
     kFlat: 1
 };
 
-var kCurrentDisplayMode = DisplayMode.kSharp;
+var kCurrentEnharmonicMode = EnharmonicMode.kSharp;
 
 const ScaleShiftDirection = {
     kDominant: 0,
@@ -50,15 +50,15 @@ class Scale
 {
     // key1のみを渡した場合: 異名同音調なし
     // key1, key2両方を渡した場合
-    //    * key1 = DisplayMode::kSharpで表示する調
-    //    * key2 = DisplayMode::kFlatで表示する調
+    //    * key1 = EnharmonicMode::kSharpで表示する調
+    //    * key2 = EnharmonicMode::kFlatで表示する調
     constructor(pitches1, pitches2) {
         this.pitches1 = pitches1;
         this.pitches2 = pitches2 || pitches1;
     }
 
-    pitches(display_mode = kCurrentDisplayMode) {
-        return (display_mode == DisplayMode.kSharp
+    pitches(enharmonic_mode = kCurrentEnharmonicMode) {
+        return (enharmonic_mode == EnharmonicMode.kSharp
                 ? this.pitches1
                 : this.pitches2
         );
@@ -108,8 +108,8 @@ const setKey = (targetDom, rootIndex, isMajor) => {
     const keyName = scale.pitches()[0] + (isMajor ? "" : "m");
     targetDom.find(".key-name-box").text(keyName);
 
-    const display_mode = (kEnharmonicKeys.indexOf(keyName) != -1 ? "visible" : "hidden");
-    targetDom.find(".switch-display-mode").css("visibility", display_mode);
+    const enharmonic_mode = (kEnharmonicKeys.indexOf(keyName) != -1 ? "visible" : "hidden");
+    targetDom.find(".switch-enharmonic-mode").css("visibility", enharmonic_mode);
 
     var cb = targetDom.find(".chords-box");
 
@@ -149,25 +149,25 @@ function getKeyFromURL(url_string)
 
     return {
         key: key,
-        disp_mode: (en == -1) ? kCurrentDisplayMode : (en % 2),
+        enharmonic_mode: (en == -1) ? kCurrentEnharmonicMode : (en % 2),
     }
 }
 
-// disp_modeの設定は、クエリ文字列になっている方が良さそう
+// enharmonic_modeの設定は、クエリ文字列になっている方が良さそう
 function changeTargetKeyByURL(url_string)
 {
     var res = getKeyFromURL(url_string);
 
     if(res) {
-        const saved_disp_mode = kCurrentDisplayMode;
-        kCurrentDisplayMode = res.disp_mode;
+        const saved_enharmonic_mode = kCurrentEnharmonicMode;
+        kCurrentEnharmonicMode = res.enharmonic_mode;
         if(changeTargetKey(res.key)) {
-            kCurrentDisplayMode = saved_disp_mode;
             return;
+        } else {
+            kCurrentEnharmonicMode = saved_enharmonic_mode;
         }
     }
 
-    res = { key: "C", disp_mode: kCurrentDisplayMode }
     window.history.replaceState("", "", new URL(url_string).origin + "/C");
     changeTargetKey("C");
 };
@@ -196,8 +196,8 @@ function changeTargetKey(keyName) {
     var pitch = keyName.replace("m", "");
 
     var index = scales.findIndex(function(elem) {
-        return elem.pitches(DisplayMode.kSharp)[0] == pitch ||
-               elem.pitches(DisplayMode.kFlat)[0] == pitch;
+        return elem.pitches(EnharmonicMode.kSharp)[0] == pitch ||
+               elem.pitches(EnharmonicMode.kFlat)[0] == pitch;
     });
 
     if(index === -1) { return false; }
@@ -254,8 +254,8 @@ function setDetailedKey(keyName, staff, context)
     const pitch = keyName.replace("m", "");
 
     const index = scales.findIndex(function(elem) {
-        return elem.pitches(DisplayMode.kSharp)[0] == pitch ||
-               elem.pitches(DisplayMode.kFlat)[0] == pitch;
+        return elem.pitches(EnharmonicMode.kSharp)[0] == pitch ||
+               elem.pitches(EnharmonicMode.kFlat)[0] == pitch;
     });
 
     if(index === -1) { return; }
@@ -350,10 +350,10 @@ $(() => {
 
     changeTargetKeyByURL(window.location.href);
 
-    $(".switch-display-mode").on("click", e => {
+    $(".switch-enharmonic-mode").on("click", e => {
         e.stopPropagation();
         const currentTargetKey = $(".tonic-key > .key-name-box").text();
-        kCurrentDisplayMode = 1 - kCurrentDisplayMode;
+        kCurrentEnharmonicMode = 1 - kCurrentEnharmonicMode;
         changeTargetKey(currentTargetKey);
     });
 });
