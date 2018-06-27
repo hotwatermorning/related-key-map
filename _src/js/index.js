@@ -153,16 +153,23 @@ function getKeyFromURL(url_string)
     }
 }
 
+// disp_modeの設定は、クエリ文字列になっている方が良さそう
 function changeTargetKeyByURL(url_string)
 {
     var res = getKeyFromURL(url_string);
-    if(!res) {
-        res = { key: "C", disp_mode: kCurrentDisplayMode }
+
+    if(res) {
+        const saved_disp_mode = kCurrentDisplayMode;
+        kCurrentDisplayMode = res.disp_mode;
+        if(changeTargetKey(res.key)) {
+            kCurrentDisplayMode = saved_disp_mode;
+            return;
+        }
     }
-    kCurrentDisplayMode = res.disp_mode;
-    if(changeTargetKey(res.key) == false) {
-        changeTargetKey("C");
-    }
+
+    res = { key: "C", disp_mode: kCurrentDisplayMode }
+    window.history.replaceState("", "", new URL(url_string).origin + "/C");
+    changeTargetKey("C");
 };
 
 function setKeyToURL(key) {
@@ -349,13 +356,13 @@ $(() => {
         kCurrentDisplayMode = 1 - kCurrentDisplayMode;
         changeTargetKey(currentTargetKey);
     });
-
-    window.onpopstate = function(event) {
-        changeTargetKeyByURL(window.location.href);
-    };
 });
 
 $(window).on("load", () => {
+    window.onpopstate = function(e) {
+        changeTargetKeyByURL(window.location.href);
+    };
+
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,
