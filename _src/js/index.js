@@ -193,7 +193,16 @@ function setKeyToURL(key, enharmonic_mode) {
     if(window.location.href !== new_href) {
         window.history.pushState("", "", new_href);
     }
-};
+
+    const encoded_url = encodeURIComponent(window.location.href.replace("http", "https").replace("localhost:8080", "related-key-map.diatonic.jp"));
+    const encoded_title = encodeURIComponent($(".header-text-box > h1").text());
+    const encoded_url_for_hatebu = encodeURIComponent(window.location.origin.replace("http://localhost:8080", "https://related-key-map.diatonic.jp"));
+    // update sns link url
+    $(".sns-button.twitter > a").attr("href", `https://twitter.com/share?url=${encoded_url}&text=${encoded_title}`);
+    $(".sns-button.facebook > a").attr("href", `https://www.facebook.com/sharer/sharer.php?u=${encoded_url}`);
+    $(".sns-button.google > a").attr("href", `https://plus.google.com/share?url=${encoded_url}`);
+    $(".sns-button.hatebu > a").attr("href", `http://b.hatena.ne.jp/entry/s/${encoded_url_for_hatebu}`);
+}
 
 //! キー名が無効な場合（D#メジャーなど）は、falseを返す。
 function changeTargetKey(keyName) {
