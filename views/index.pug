@@ -61,7 +61,8 @@ mixin right-arrow
 block content
   .header-box
     .header-text-box
-      h1= title
+      h1
+        a= title
   .key-container
     .key-row
       +indirectly-related-key("key1")

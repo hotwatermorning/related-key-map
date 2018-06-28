@@ -194,9 +194,9 @@ function setKeyToURL(key, enharmonic_mode) {
         window.history.pushState("", "", new_href);
     }
 
-    const encoded_url = encodeURIComponent(window.location.href.replace("http", "https").replace("localhost:8080", "related-key-map.diatonic.jp"));
+    const encoded_url = encodeURIComponent(window.location.href);
     const encoded_title = encodeURIComponent($(".header-text-box > h1").text());
-    const encoded_url_for_hatebu = encodeURIComponent(window.location.origin.replace("http://localhost:8080", "https://related-key-map.diatonic.jp"));
+    const encoded_url_for_hatebu = encodeURIComponent(window.location.origin);
     // update sns link url
     $(".sns-button.twitter > a").attr("href", `https://twitter.com/share?url=${encoded_url}&text=${encoded_title}`);
     $(".sns-button.facebook > a").attr("href", `https://www.facebook.com/sharer/sharer.php?u=${encoded_url}`);
@@ -356,6 +356,7 @@ function setDetailedKey(keyName, staff, context)
 }
 
 $(() => {
+    $(".header-text-box > h1 > a").attr("href", window.location.origin);
     $(".expand-image").attr("src", expand_image);
 
     for(var i = 1; i <= 9; ++i) {
