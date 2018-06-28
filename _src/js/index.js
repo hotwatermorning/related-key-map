@@ -197,7 +197,8 @@ function setKeyToURL(key, enharmonic_mode) {
     const encoded_url = encodeURIComponent(window.location.href);
     const encoded_title = encodeURIComponent($(".header-text-box > h1").text());
     const encoded_url_for_hatebu = encodeURIComponent(window.location.origin);
-    // update sns link url
+
+    // update sns link urls
     $(".sns-button.twitter > a").attr("href", `https://twitter.com/share?url=${encoded_url}&text=${encoded_title}`);
     $(".sns-button.facebook > a").attr("href", `https://www.facebook.com/sharer/sharer.php?u=${encoded_url}`);
     $(".sns-button.google > a").attr("href", `https://plus.google.com/share?url=${encoded_url}`);
