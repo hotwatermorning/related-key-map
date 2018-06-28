@@ -387,19 +387,19 @@ $(window).on("load", () => {
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,
-        height: 300,
+        height: 320,
         before_open: function(e) {
             e.stopPropagation();
 
             var staffDom = $("#staff");
             $("svg", staffDom).remove();
             var st = new VF.Stave(0, 30, 0, { fill_style: "#444444" });
-            st.setWidth(staffDom.width()-1);
+            st.setWidth(staffDom.width() / 1.1 - 1);
             st.addClef("treble");
             var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
             var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-            renderer.resize(staffDom.width(), staffDom.height());
+            renderer.resize(staffDom.width() / 1.1, staffDom.height());
 
             var context = renderer.getContext();
             setDetailedKey(target_key_name, st, context);

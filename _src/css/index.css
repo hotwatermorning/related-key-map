@@ -272,9 +272,10 @@ body {
 
 .staff-box {
   width: 660px;
-  height: 180px;
+  height: 200px;
   margin: auto;
   background-color: hsl(220, 10%, 75%);
+  transform: scale(1.1) translate(40px, 20px);
 
   /* border: solid 1px hsl(90, 30%, 30%);
   box-sizing: border-box; */
@@ -283,7 +284,7 @@ body {
 .staff {
   margin: auto;
   width: 660px;
-  height: 180px;
+  height: 200px;
 }
 
 .footer-box {
