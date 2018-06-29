@@ -45,6 +45,15 @@ module.exports = (env, args) => {
             name: "./images/[name].[ext]"
           }
         }
+      },{
+        test: /\.(otf|ttf)$/,
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "[name].[ext]",
+            context: "",
+          }
+        },
       }]
     },
     plugins: [

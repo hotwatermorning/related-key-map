@@ -2,8 +2,13 @@
 
 :root {
   --arrow-color: hsl(110, 60%, 80%);
-  --font-family: "Cardo";
+  --font-family: "minimum-key-signature", "Cardo";
   --expand-image-size: 40px;
+}
+
+@font-face {
+  font-family: "minimum-key-signature";
+  src: url("Minimum_key_signature-Regular.ttf") format("truetype");
 }
 
 html {
@@ -15,6 +20,10 @@ body {
   background-color: hsl(0, 10%, 20%);
   margin: 0px;
   min-width: 950px;
+}
+
+%key-signature-base {
+  font-family: "minimum-key-signature"
 }
 
 .header-box {
@@ -33,7 +42,7 @@ body {
   color: hsl(0, 100%, 100%);
 
   h1 {
-    font-family: var(--font-family), serif;
+    font-family: "Cardo", serif;
     font-weight: normal;
     -webkit-margin-before: 0em;
     -webkit-margin-after: 0em;
@@ -123,6 +132,8 @@ body {
   position: relative;
   top: 10px;
   left: var(--expand-image-size);
+  line-height: 75px;
+  overflow: hidden;
 }
 
 .expand-image {
@@ -137,6 +148,7 @@ body {
 }
 
 .switch-enharmonic-mode {
+  font-family: var(--font-family);
   visibility: hidden;
   width: 60px;
   height: 40px;
@@ -146,7 +158,7 @@ body {
   top: 0px;
   left: 0px;
   border-radius: 20px;
-  font-size: 22px;
+  font-size: 28px;
   color: rgba(255, 255, 255, 75%);
 }
 
