@@ -388,7 +388,7 @@ $(window).on("load", () => {
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,
-        height: 320,
+        height: 300,
         before_open: function(e) {
             e.stopPropagation();
 
