@@ -36,10 +36,10 @@ function shiftScale(step, direction, isMajor) {
     for(var i = 0; i < step; ++i) {
         if(direction == ScaleShiftDirection.kDominant) {
             tmp = tmp.slice(4, 7).concat(tmp.slice(0, 4));
-            tmp[(isMajor ? 6 : 1)] += "#";
+            tmp[(isMajor ? 6 : 1)] += "♯";
         } else {
             tmp = tmp.slice(3, 7).concat(tmp.slice(0, 3));
-            tmp[(isMajor ? 3 : 5)] += "b";
+            tmp[(isMajor ? 3 : 5)] += "♭";
         }
     }
     
@@ -93,12 +93,12 @@ const naturalMinorScaleChords = [
 ];
 
 const kEnharmonicKeys = [
-    "B", "Cb", 
-    "F#", "Gb", 
-    "C#", "Db", 
-    "G#m", "Abm", 
-    "D#m", "Ebm", 
-    "A#m", "Bbm"
+    "B", "C♭", 
+    "F♯", "G♭", 
+    "C♯", "D♭", 
+    "G♯m", "A♭m", 
+    "D♯m", "E♭m", 
+    "A♯m", "B♭m"
 ];
 
 const setKey = (targetDom, rootIndex, isMajor) => {
@@ -140,7 +140,7 @@ function getKeyFromURL(url_string)
 
     var result = {};
 
-    result.key = url.pathname.substr(1).replace("sharp", "#").replace("flat", "b");
+    result.key = url.pathname.substr(1).replace("sharp", "♯").replace("flat", "♭");
 
     if(result.key.length >= 4) { return; }
 
@@ -186,7 +186,7 @@ function setKeyToURL(key, enharmonic_mode) {
     var url = new URL(window.location.href);
     var new_href 
     = url.origin + "/" 
-    + key.replace("#", "sharp").replace("b", "flat")
+    + key.replace("♯", "sharp").replace("♭", "flat")
     + "?em=" + enharmonic_mode
     ;
 
@@ -239,28 +239,33 @@ function changeTargetKey(keyName) {
 };
 
 const kPitchIndex = {
-    "Cb": -1,
+    "C♭": -1,
     "C": 0,
-    "C#": 1,
-    "Db": 1,
+    "C♯": 1,
+    "D♭": 1,
     "D": 2,
-    "D#": 3,
-    "Eb": 3,
+    "D♯": 3,
+    "E♭": 3,
     "E": 4,
-    "Fb": 4,
-    "E#": 5,
+    "F♭": 4,
+    "E♯": 5,
     "F": 5,
-    "F#": 6,
-    "Gb": 6,
+    "F♯": 6,
+    "G♭": 6,
     "G": 7,
-    "G#": 8,
-    "Ab": 8,
+    "G♯": 8,
+    "A♭": 8,
     "A": 9,
-    "A#": 10,
-    "Bb": 10,
+    "A♯": 10,
+    "B♭": 10,
     "B": 11,
-    "B#": 12,
+    "B♯": 12,
 };
+
+function toAscii(keyname)
+{
+    return keyname.replace("♯", "#").replace("♭", "b");
+}
 
 function setDetailedKey(keyName, staff, context)
 {
@@ -307,10 +312,10 @@ function setDetailedKey(keyName, staff, context)
         var tetrad = new VF.StaveNote({
             clef: "treble",
             keys: [
-                `${root.toLowerCase()}/${rootOctave}`,
-                `${third.toLowerCase()}/${thirdOctave}`,
-                `${fifth.toLowerCase()}/${fifthOctave}`,
-                `${seventh.toLowerCase()}/${seventhOctave}`,
+                `${toAscii(root.toLowerCase())}/${rootOctave}`,
+                `${toAscii(third.toLowerCase())}/${thirdOctave}`,
+                `${toAscii(fifth.toLowerCase())}/${fifthOctave}`,
+                `${toAscii(seventh.toLowerCase())}/${seventhOctave}`,
             ], 
             duration: "h"
          });
@@ -322,7 +327,7 @@ function setDetailedKey(keyName, staff, context)
             duration: "h",
             line: 12,
             font: {
-                 family: "Serif",
+                 family: "minimum-key-signature, Cardo",
                  size: 12,
                  weight: ""
             },
@@ -341,7 +346,7 @@ function setDetailedKey(keyName, staff, context)
     voice.addTickables(notes);
     voice2.addTickables(notes2);
 
-    staff.setKeySignature(keyName);
+    staff.setKeySignature(toAscii(keyName));
     staff.format();
     staff.setContext(context);
 
@@ -377,6 +382,8 @@ $(() => {
         ? EnharmonicMode.kFlat
         : EnharmonicMode.kSharp;
         changeTargetKey(currentTargetKey);
+
+        playbackChord([69, 69 + 4, 69 + 7, 69 + 11]);
     });
 });
 
@@ -405,5 +412,8 @@ $(window).on("load", () => {
             var context = renderer.getContext();
             setDetailedKey(target_key_name, st, context);
         },
+        after_open: function(e) {
+            $("svg > text").css("font-size", "18px");
+        }
     });
 });
