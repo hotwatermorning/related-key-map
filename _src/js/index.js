@@ -329,7 +329,7 @@ function setDetailedKey(keyName, staff, context)
             line: 12,
             font: {
                  family: "minimum-key-signature, Cardo",
-                 size: 12,
+                 size: 13,
                  weight: ""
             },
          });
@@ -413,8 +413,5 @@ $(window).on("load", () => {
             var context = renderer.getContext();
             setDetailedKey(target_key_name, st, context);
         },
-        after_open: function(e) {
-            $("svg > text").css("font-size", "18px");
-        }
     });
 });
