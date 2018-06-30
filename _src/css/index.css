@@ -103,6 +103,9 @@ body {
 
   &:hover {
     filter: saturate(105%) brightness(112%);
+    /* workaround of unexpected blur on safari. */
+    /* https://stackoverflow.com/questions/13866577/mobile-safari-grayscale-filter-adds-blur */
+    -webkit-transform: translateZ(0);
   }
 }
 
