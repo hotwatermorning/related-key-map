@@ -393,6 +393,8 @@ $(window).on("load", () => {
         changeTargetKeyByURL(window.location.href);
     };
 
+    $(".sns-button").css("display", "block");
+
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,

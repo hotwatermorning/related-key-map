@@ -58,6 +58,11 @@ mixin right-arrow
     .arrow-box-title= "平行調"
     .right-arrow
 
+mixin link-icon(title, class_name, fa_class_name)
+  div(class!=`sns-button ${class_name}` style={display: "none"})
+    a(href="" title=title target="_blank")
+      i(class!=`fab fa-lg ${fa_class_name}` aria-hidden="true")
+
 block content
   .header-box
     .header-text-box
@@ -96,18 +101,8 @@ block content
       = "© 2018 "
       a(class="footer-site-link" href="https://diatonic.jp" target="_blank")= "diatonic.jp"
     .sns-link-box
-      .sns-button.twitter
-        a(href="" title="Tweet" target="_blank")
-          i.fab.fa-twitter
-      .sns-button.facebook
-        a(href="" title="Facebook" target="_blank")
-          i.fab.fa-facebook-f
-      .sns-button.google
-        a(href="" title="google+" target="_blank")
-          i.fab.fa-google-plus-g
-      .sns-button.hatebu
-        a(href="" title="はてなブックマーク" target="_blank")
-          i.fab.fa-hatebu
-      .sns-button.github
-        a(href="https://github.com/hotwatermorning/related-key-map" title="Project Page" target="_blank")
-          i.fab.fa-github
+      +link-icon("Tweet", "twitter", "fa-twitter")
+      +link-icon("Facebook", "facebook", "fa-facebook-f")
+      +link-icon("Google+", "google", "fa-google-plus-g")
+      +link-icon("はてなブックマーク", "hatebu", "fa-hatebu")
+      +link-icon("Project Page", "github", "fa-github")
