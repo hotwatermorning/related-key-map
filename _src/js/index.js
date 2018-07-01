@@ -363,14 +363,14 @@ function setDetailedKey(keyName, staff, context)
                 `${toAscii(fifth.toLowerCase())}/${fifthOctave}`,
                 `${toAscii(seventh.toLowerCase())}/${seventhOctave}`,
             ], 
-            duration: "h"
+            duration: "q"
          });
 
          stave_notes.push(tetrad);
          
          var text = new VF.TextNote({
             text: chordName,
-            duration: "h",
+            duration: "q",
             line: 12,
             font: {
                  family: "minimum-key-signature, Cardo",
@@ -392,8 +392,8 @@ function setDetailedKey(keyName, staff, context)
     stave_notes.forEach(function(note) {note.setContext(context)});
     text_notes.forEach(function(note) {note.setContext(context)});
 
-    var voice = new VF.Voice({num_beats: 7, beat_value: 2}); 
-    var voice2 = new VF.Voice({num_beats: 7, beat_value: 2});
+    var voice = new VF.Voice({num_beats: 7, beat_value: 4}); 
+    var voice2 = new VF.Voice({num_beats: 7, beat_value: 4});
 
     voice.addTickables(stave_notes);
     voice2.addTickables(text_notes);
