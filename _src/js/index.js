@@ -310,11 +310,11 @@ function makeNotePlayable(id, pitches) {
     $(`#vf-${id}`).on("mousedown touchstart", function(e) {
         e.preventDefault();
         e.stopPropagation();
-        if(AC.state == "suspended") {
-            AC.resume().then(() => { playback(); });
-        } else {
-            playback();
-        }
+        // if(AC.state == "suspended") {
+        //     AC.resume().then(() => { playback(); });
+        // } else {
+        //     playback();
+        // }
     });
 }
 
