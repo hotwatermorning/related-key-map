@@ -279,7 +279,7 @@ function makeNotePlayable(id, pitches) {
         return 440.0 * Math.pow(2.0, (note_number - kBaseNoteNumber) / 12.0);
     }
 
-    $(`#vf-${id}`).on("click", function(e) {
+    function playback() {
         const now = AC.currentTime;
         const attackTime = 0.01;
         const decayTime = 0.7;
@@ -304,6 +304,15 @@ function makeNotePlayable(id, pitches) {
                                     now + attackTime + decayTime);
 
         g.connect(AC.destination);
+    };
+
+
+    $(`#vf-${id}`).on("click", function(e) {
+        if(AC.state == "suspended") {
+            AC.resume().then(() => { playback(); });
+        } else {
+            playback();
+        }
     });
 }
 
