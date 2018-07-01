@@ -310,21 +310,16 @@ function makeNotePlayable(id, pitches) {
     $(document).on("touchstart mousedown", `#vf-${id}`, function(e) {
         e.preventDefault();
         e.stopPropagation();
-        // if(AC.state == "suspended") {
-        //     AC.resume().then(() => { playback(); });
-        // } else {
-        //     playback();
-        // }
+        if(AC.state == "suspended") {
+            AC.resume().then(() => { playback(); });
+        } else {
+            playback();
+        }
     });
 
     $(document).on("touchend mouseup", `#vf-${id}`, function(e) {
         e.preventDefault();
         e.stopPropagation();
-        // if(AC.state == "suspended") {
-        //     AC.resume().then(() => { playback(); });
-        // } else {
-        //     playback();
-        // }
     });
 }
 
