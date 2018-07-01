@@ -34,7 +34,7 @@ module.exports = (env, args) => {
           }
         ]
       },{
-        test: /\.(jpe?g|png|gif|svg|ico)(\?.+)?$/,
+        test: /\.(jpe?g|png|gif|svg|ico|ttf)(\?.+)?$/,
         include: [
           path.resolve(__dirname, "_src", "images")
         ],
