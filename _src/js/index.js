@@ -197,7 +197,7 @@ function setKeyToURL(key, enharmonic_mode) {
 
     const encoded_url = encodeURIComponent(window.location.href);
     const encoded_title = encodeURIComponent($(".header-text-box > h1").text());
-    const encoded_url_for_hatebu = encodeURIComponent(window.location.origin);
+    const encoded_url_for_hatebu = encodeURIComponent(window.location.origin.replace("https://", ""));
 
     // update sns link urls
     $(".sns-button.twitter > a").attr("href", `https://twitter.com/share?url=${encoded_url}&text=${encoded_title}`);
