@@ -265,8 +265,7 @@ const kPitchIndex = {
 
 function makeNotePlayable(id, pitches) {
     if(AC === undefined) {
-        var AudioContext = window.AudioContext || windo
-.webkitAudioContext;
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
         if(!AudioContext) {
             alert("WebAudio not supported");
             return;
