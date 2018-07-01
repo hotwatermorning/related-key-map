@@ -2,7 +2,7 @@ import expand_image from "../images/expand.png";
 require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
-import "../fonts/Minimum_key_signature-Regular.ttf";
+
 var VF = undefined;
 import(
     /* webpackChunkName: "vexflow" */
