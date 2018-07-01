@@ -2,7 +2,7 @@ import expand_image from "../images/expand.png";
 require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
-
+var AC = undefined;
 var VF = undefined;
 import(
     /* webpackChunkName: "vexflow" */
@@ -263,6 +263,51 @@ const kPitchIndex = {
     "B♯": 12,
 };
 
+function makeNotePlayable(id, pitches) {
+    if(AC === undefined) {
+        var AudioContext = window.AudioContext || windo
+.webkitAudioContext;
+        if(!AudioContext) {
+            alert("WebAudio not supported");
+            return;
+        }
+        AC = new AudioContext();
+    }
+
+    // A3 = 440Hz = 69とする
+    var noteNumberToHz = function(note_number) {
+        const kBaseNoteNumber = 69;
+        return 440.0 * Math.pow(2.0, (note_number - kBaseNoteNumber) / 12.0);
+    }
+
+    $(`#vf-${id}`).on("click", function(e) {
+        const now = AC.currentTime;
+        const attackTime = 0.01;
+        const decayTime = 0.7;
+        const sustainLevel = 0.0;
+        const maxLevel = 0.6;
+
+        var voices = [];
+        var g = AC.createGain();
+        for(var i = 0; i < pitches.length; ++i) {
+            var vco = AC.createOscillator();
+            vco.frequency.value = noteNumberToHz(pitches[i]);
+            vco.connect(g);
+            vco.type = "sine";
+            vco.start(0);
+            vco.stop(now + 1.0);
+            voices.push(vco);
+        }
+
+        g.gain.setValueAtTime(0.0, now);
+        g.gain.linearRampToValueAtTime(maxLevel, now + attackTime);
+        g.gain.linearRampToValueAtTime(sustainLevel * maxLevel,
+                                    now + attackTime + decayTime);
+
+        g.connect(AC.destination);
+    });
+}
+
 function toAscii(keyname)
 {
     return keyname.replace("♯", "#").replace("♭", "b");
@@ -288,10 +333,12 @@ function setDetailedKey(keyName, staff, context)
 
     $(".key-detail-heading > .key-title").text(keyName);
 
-    var notes = [];
-    var notes2 = [];
+    var stave_notes = [];
+    var text_notes = [];
+    var note_numbers = [];
     var lastRootPitchIndex = 0;
     var rootOctave = ((kPitchIndex[scale.pitches()[0]] + 12) % 12 < kPitchIndex["G"]) ? 4 : 3;
+
     for(var i = 0; i < 7; ++i) {
         var root = scale.pitches()[i];
         var third = scale.pitches()[(i + 2) % 7];
@@ -308,7 +355,6 @@ function setDetailedKey(keyName, staff, context)
         var seventhOctave = fifthOctave + (kPitchIndex[fifth] > kPitchIndex[seventh]);
 
         const chordName = scale.pitches()[i] + chords[i];
-        // cd.eq(i).text(chordName);
 
         var tetrad = new VF.StaveNote({
             clef: "treble",
@@ -321,7 +367,7 @@ function setDetailedKey(keyName, staff, context)
             duration: "h"
          });
 
-         notes.push(tetrad);
+         stave_notes.push(tetrad);
          
          var text = new VF.TextNote({
             text: chordName,
@@ -335,17 +381,23 @@ function setDetailedKey(keyName, staff, context)
          });
          text = text.setJustification(VF.TextNote.Justification.RIGHT);
 
-         notes2.push(text);
+         text_notes.push(text);
+
+         note_numbers[i] = [];
+         note_numbers[i][0] = (rootOctave + 1) * 12 + kPitchIndex[root];
+         note_numbers[i][1] = (thirdOctave + 1) * 12 + kPitchIndex[third];
+         note_numbers[i][2] = (fifthOctave + 1) * 12 + kPitchIndex[fifth];
+         note_numbers[i][3] = (seventhOctave + 1) * 12 + kPitchIndex[seventh];
     }
 
-    notes.forEach(function(note) {note.setContext(context)});
-    notes2.forEach(function(note) {note.setContext(context)});
+    stave_notes.forEach(function(note) {note.setContext(context)});
+    text_notes.forEach(function(note) {note.setContext(context)});
 
     var voice = new VF.Voice({num_beats: 7, beat_value: 2}); 
     var voice2 = new VF.Voice({num_beats: 7, beat_value: 2});
 
-    voice.addTickables(notes);
-    voice2.addTickables(notes2);
+    voice.addTickables(stave_notes);
+    voice2.addTickables(text_notes);
 
     staff.setKeySignature(toAscii(keyName));
     staff.format();
@@ -358,6 +410,10 @@ function setDetailedKey(keyName, staff, context)
     staff.draw();
     voice.draw(context, staff);
     voice2.draw(context, staff);
+
+    for(var i = 0; i < 7; ++i) {
+        makeNotePlayable(stave_notes[i].attrs.id, note_numbers[i]);
+    }
 
     staff.setContext(undefined);
 }
@@ -383,8 +439,6 @@ $(() => {
         ? EnharmonicMode.kFlat
         : EnharmonicMode.kSharp;
         changeTargetKey(currentTargetKey);
-
-        playbackChord([69, 69 + 4, 69 + 7, 69 + 11]);
     });
 });
 
