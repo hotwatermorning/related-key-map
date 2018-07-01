@@ -395,7 +395,7 @@ function setDetailedKey(keyName, staff, context)
             line: 12,
             font: {
                  family: "minimum-key-signature, Cardo",
-                 size: 13,
+                 size: 10,
                  weight: ""
             },
          });
@@ -472,19 +472,19 @@ $(window).on("load", () => {
     $(".inline").modaal({
         animation_speed: 200,
         width: 720,
-        height: 300,
+        height: 360,
         before_open: function(e) {
             e.stopPropagation();
 
             var staffDom = $("#staff");
             $("svg", staffDom).remove();
-            var st = new VF.Stave(0, 30, 0, { fill_style: "#444444" });
-            st.setWidth(staffDom.width() / 1.1 - 1);
+            var st = new VF.Stave(0, 70, 0, { fill_style: "#444444" });
+            st.setWidth(staffDom.width() / 1.4 - 2);
             st.addClef("treble");
             var target_key_name = $(".key-name-box", $(e.delegateTarget).parent()).text();
 
             var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-            renderer.resize(staffDom.width() / 1.1, staffDom.height());
+            renderer.resize(staffDom.width() / 1.4, staffDom.height());
 
             var context = renderer.getContext();
             setDetailedKey(target_key_name, st, context);
