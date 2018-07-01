@@ -290,16 +290,14 @@ body {
   height: 180px;
   margin: auto;
   background-color: hsl(220, 10%, 75%);
-  transform: scale(1.1) translateX(40px);
-
-  /* border: solid 1px hsl(90, 30%, 30%);
-  box-sizing: border-box; */
+  overflow: hidden;
 }
 
 .staff {
   margin: auto;
   width: 660px;
   height: 180px;
+  transform: scale(1.1) translateX(30px);
 }
 
 .footer-box {
