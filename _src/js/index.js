@@ -204,6 +204,7 @@ function setKeyToURL(key, enharmonic_mode) {
     $(".sns-button.facebook > a").attr("href", `https://www.facebook.com/sharer/sharer.php?u=${encoded_url}`);
     $(".sns-button.google > a").attr("href", `https://plus.google.com/share?url=${encoded_url}`);
     $(".sns-button.hatebu > a").attr("href", `http://b.hatena.ne.jp/entry/s/${encoded_url_for_hatebu}`);
+    $(".sns-button.github > a").attr("href", "https://github.com/hotwatermorning/related-key-map");
 }
 
 //! キー名が無効な場合（D#メジャーなど）は、falseを返す。
