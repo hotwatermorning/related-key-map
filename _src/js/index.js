@@ -49,10 +49,10 @@ function shiftScale(step, direction, isMajor) {
 
 class Scale
 {
-    // key1のみを渡した場合: 異名同音調なし
-    // key1, key2両方を渡した場合
-    //    * key1 = EnharmonicMode::kSharpで表示する調
-    //    * key2 = EnharmonicMode::kFlatで表示する調
+    // pitches1のみを渡した場合: 異名同音調なし
+    // pitches1, pitches2両方を渡した場合
+    //    * pitches1 = EnharmonicMode::kSharpで表示する調
+    //    * pitches2 = EnharmonicMode::kFlatで表示する調
     constructor(pitches1, pitches2) {
         this.pitches1 = pitches1;
         this.pitches2 = pitches2 || pitches1;
