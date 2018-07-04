@@ -20,7 +20,8 @@ const EnharmonicMode = {
     kFlat: "flat",
 };
 
-var kCurrentEnharmonicMode = EnharmonicMode.kSharp;
+const kDefaultEnharmonicMode = EnharmonicMode.kSharp;
+var kCurrentEnharmonicMode = kDefaultEnharmonicMode;
 
 const ScaleShiftDirection = {
     kDominant: 0,
@@ -131,7 +132,18 @@ const setKey = (targetDom, rootIndex, isMajor) => {
 };
 
 // url format:
-// https://<host>/[A-G](sharp|flat)m?\?em=(sharp|flat)
+// https://<host>/([A-G](sharp|flat)?m?&em=(sharp|flat))?
+
+function makeURL(key, enharmonic_mode)
+{
+    var new_href 
+    = window.location.origin + "/" 
+    + key.replace("♯", "sharp").replace("♭", "flat")
+    + "?em=" + enharmonic_mode
+    ;
+
+    return new_href;
+}
 
 function getKeyFromURL(url_string)
 {
@@ -142,21 +154,21 @@ function getKeyFromURL(url_string)
     var result = {};
 
     result.key = url.pathname.substr(1).replace("sharp", "♯").replace("flat", "♭");
+    if(result.key.length > 3) { return; }
 
-    if(result.key.length >= 4) { return; }
+    // URLで、keyとemの指定が矛盾した場合(ex. /Csharp&em=flat)は、
+    // keyを優先する。
 
     const em = url.searchParams.get("em");
     if(em && Object.values(EnharmonicMode).indexOf(em) !== -1) {
         result.enharmonic_mode = em;
     }
 
-    if(!("enharmonic_mode" in result)) {
-        const en_index = kEnharmonicKeys.indexOf(result.key);
-        if(en_index === -1) { 
-            result.enharmonic_mode = kCurrentEnharmonicMode;
-        } else {
-            result.enharmonic_mode = (en_index % 2 == 0) ? EnharmonicMode.kSharp : EnharmonicMode.kFlat;
-        }
+    const en_index = kEnharmonicKeys.indexOf(result.key);
+    if(en_index !== -1) {
+        result.enharmonic_mode = (en_index % 2 == 0) ? EnharmonicMode.kSharp : EnharmonicMode.kFlat;
+    } else {
+        result.enhamornic_mode = (result.enharmonic_mode || kCurrentEnharmonicMode);
     }
 
     return result;
@@ -168,30 +180,34 @@ function changeTargetKeyByURL(url_string)
     var res = getKeyFromURL(url_string);
 
     if(res) {
-        const saved_enharmonic_mode = kCurrentEnharmonicMode;
+        window.history.replaceState("", "", makeURL(res.key, res.enharmonic_mode));
         kCurrentEnharmonicMode = res.enharmonic_mode;
         if(changeTargetKey(res.key)) {
             return;
-        } else {
-            kCurrentEnharmonicMode = saved_enharmonic_mode;
         }
     }
 
+    // URLからキーとenharmonic modeを決定できなかった場合は、
+    // EnharmonicModeをデフォルト値に戻して、"/"へのアクセスにする
+    kCurrentEnharmonicMode = kDefaultEnharmonicMode;
+
     const url = new URL(url_string);
-    window.history.replaceState("", "", url.origin + "/C?em=" + kCurrentEnharmonicMode);
+    window.history.replaceState("", "", url.origin);
     changeTargetKey("C");
 };
 
 function setKeyToURL(key, enharmonic_mode) {
 
-    var url = new URL(window.location.href);
-    var new_href 
-    = url.origin + "/" 
-    + key.replace("♯", "sharp").replace("♭", "flat")
-    + "?em=" + enharmonic_mode
-    ;
+    const new_href = makeURL(key, enharmonic_mode);
 
-    if(window.location.href !== new_href) {
+    // "/"へのリクエストのときは、locationを変更しない
+    const useCurrentURL
+    = (window.location.href === (window.location.origin + "/"))
+    && key === "C"
+    && enharmonic_mode === EnharmonicMode.kSharp;
+
+    if( !useCurrentURL && window.location.href !== new_href )
+    {
         window.history.pushState("", "", new_href);
     }
 
