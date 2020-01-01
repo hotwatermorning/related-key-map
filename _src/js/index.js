@@ -189,12 +189,12 @@ const setKey = (target_dom, root_index, is_major, enharmonic_mode, minor_scale_m
     var cb = target_dom.find(".chords-box");
 
     var text1 = "", text2 = "";
-    for(var i = 0; i < 4; ++i) {
+    for(var i = 0; i < 3; ++i) {
         text1 += removeNaturalAccidental(toDisplay(scale.pitches()[i])) + chords[i];
         text1 += (i == 3 ? "" : " ");
     }
 
-    for(var i = 4; i < 7; ++i) {
+    for(var i = 3; i < 7; ++i) {
         text2 += removeNaturalAccidental(toDisplay(scale.pitches()[i])) + chords[i];
         text2 += (i == 6 ? "" : " ");
     }

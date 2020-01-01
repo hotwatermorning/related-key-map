@@ -28,9 +28,9 @@ body {
 
 .header-box {
   margin-left: -500%;
-	margin-right: -500%;
-	padding-left: 500%;
-	padding-right: 500%;
+  margin-right: -500%;
+  padding-left: 500%;
+  padding-right: 500%;
   background-color: hsl(0, 10%, 10%);
 }
 
@@ -56,7 +56,7 @@ body {
 
 .key-container {
   height: 600px;
-  width: 1000px;
+  width: 900px;
   margin: 60px auto;
   box-sizing: border-box;
   color: #FFFFFF;
@@ -88,7 +88,7 @@ body {
 
 %key-box-base {
   height: 140px;
-  width: 270px;
+  width: 240px;
   display: block;
   box-sizing: border-box;
   border-radius: 20px;
@@ -126,7 +126,7 @@ body {
 
 .key-name-box {
   height: 75px;
-  width: calc(270px - var(--expand-image-size) * 2);
+  width: calc(240px - var(--expand-image-size) * 2);
   text-align: center;
   font-size: 50px;
   font-family: var(--font-family), serif;
