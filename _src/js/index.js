@@ -344,7 +344,7 @@ function changeTargetKey(key_name) {
             break;
     }
 
-    $(".switch-minor-scale-mode").text(minor_scale_text);
+    $(".minor-scale-mode-name").text(minor_scale_text);
 
     setKeyToURL(toInternal($("#key5 .key-name-box").text()), em, ms);
     return true;

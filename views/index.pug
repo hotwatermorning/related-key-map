@@ -5,8 +5,11 @@ mixin key(key_name, chords, style)
     a(href="#inline" class="inline")
       img.expand-image
     .key-name-box
-    .switch-enharmonic-mode= "♯⇄♭"
-    .switch-minor-scale-mode= ""
+    .switch-enharmonic-mode.enharmonic-mode-symbol.enharmonic-mode-sharp= "♯"
+    .switch-enharmonic-mode.enharmonic-mode-symbol.enharmonic-mode-flat= "♭"
+    .switch-enharmonic-mode.enharmonic-mode-rotate.rotate-symbol= "⇄"
+    .switch-minor-scale-mode.minor-scale-mode-name= ""
+    .switch-minor-scale-mode.minor-scale-mode-rotate.rotate-symbol= "⇄"
     .chords-box
       .chords-line
       .chords-line
