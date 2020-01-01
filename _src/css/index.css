@@ -56,7 +56,7 @@ body {
 
 .key-container {
   height: 600px;
-  width: 900px;
+  width: 1000px;
   margin: 60px auto;
   box-sizing: border-box;
   color: #FFFFFF;
@@ -88,7 +88,7 @@ body {
 
 %key-box-base {
   height: 140px;
-  width: 240px;
+  width: 270px;
   display: block;
   box-sizing: border-box;
   border-radius: 20px;
@@ -126,7 +126,7 @@ body {
 
 .key-name-box {
   height: 75px;
-  width: calc(240px - var(--expand-image-size) * 2);
+  width: calc(270px - var(--expand-image-size) * 2);
   text-align: center;
   font-size: 50px;
   font-family: var(--font-family), serif;
@@ -162,6 +162,21 @@ body {
   left: 0px;
   border-radius: 20px;
   font-size: 28px;
+  color: rgba(255, 255, 255, 75%);
+}
+
+.switch-minor-scale-mode {
+  font-family: var(--font-family);
+  visibility: hidden;
+  width: 60px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  position: absolute;
+  top: 37px;
+  left: 0px;
+  border-radius: 20px;
+  font-size: 24px;
   color: rgba(255, 255, 255, 75%);
 }
 
@@ -286,7 +301,7 @@ body {
 }
 
 .staff-box {
-  width: 660px;
+  width: 840px;
   height: 280px;
   margin: auto;
   background-color: hsl(220, 10%, 75%);
@@ -295,7 +310,7 @@ body {
 
 .staff {
   margin: auto;
-  width: 660px;
+  width: 730px;
   height: 280px;
   transform: scale(1.4) translateX(96px);
 }
