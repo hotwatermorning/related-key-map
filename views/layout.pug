@@ -1,6 +1,12 @@
 doctype html
 html
   head
+    script(async src="https://www.googletagmanager.com/gtag/js?id=UA-17194470-5")
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-17194470-5');
     title= title
     meta(name="keywords", content="キー, スケール, 五度圏, 調, 近親調")
     meta(name="description", content="ある音楽の調に対する近親調を表示します")
