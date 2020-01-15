@@ -471,7 +471,9 @@ function setDetailedKey(key_name, staff, render_context)
     const is_major = key_name.endsWith("m") == false;
 
     var index = getRootIndexFromKeyName(key_name);
-    const scale = getScale(index, is_major, kCurrentEnharmonicMode, kCurrentMinorScaleMode);
+    const em = kCurrentEnharmonicMode;
+    const ms = kCurrentMinorScaleMode;
+    const scale = getScale(index, is_major, em, ms);
     const chords = getScaleChordList(is_major, kCurrentMinorScaleMode);
 
     const pitch = key_name.replace("m", "");
@@ -512,18 +514,50 @@ function setDetailedKey(key_name, staff, render_context)
             duration: "q"
         });
 
-        function add_accidental(note, index, tetrad) {
+        // moved: HM, NM のスケールのために半音上げられた音
+        function add_accidental(note, index, tetrad, moved) {
             if(note.includes("##")) {
                 tetrad = tetrad.addAccidental(index, new VF.Accidental("##"));
             } else if(note.includes("n")) {
                 tetrad = tetrad.addAccidental(index, new VF.Accidental("n"));
+            } else if(moved && note.includes("#")) {
+                tetrad = tetrad.addAccidental(index, new VF.Accidental("#"));
             }
         };
 
-        add_accidental(n1, 0, tetrad);
-        add_accidental(n2, 1, tetrad);
-        add_accidental(n3, 2, tetrad);
-        add_accidental(n4, 3, tetrad);
+        // i: interval (0 start)
+        // j: index in a chord (0 start)
+        // ms: minor scale mode
+        function is_moved(i, j, is_major, ms) {
+            if(is_major || ms == MinorScaleMode.kNatural) { return false; }
+            if(ms == MinorScaleMode.kHarmonic) {
+                switch(i) {
+                    case 0: return j == 3;
+                    case 2: return j == 2;
+                    case 4: return j == 1;
+                    case 6: return j == 0;
+                    default: return false;
+                }
+            } else if(ms == MinorScaleMode.kMelodic) {
+                switch(i) {
+                    case 0: return j == 3;
+                    case 1: return j == 2;
+                    case 2: return j == 2;
+                    case 3: return j == 1;
+                    case 4: return j == 1;
+                    case 5: return j == 0;
+                    case 6: return j == 0 || j == 3;
+                    default: return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        add_accidental(n1, 0, tetrad, is_moved(i, 0, is_major, ms));
+        add_accidental(n2, 1, tetrad, is_moved(i, 1, is_major, ms));
+        add_accidental(n3, 2, tetrad, is_moved(i, 2, is_major, ms));
+        add_accidental(n4, 3, tetrad, is_moved(i, 3, is_major, ms));
 
         stave_notes.push(tetrad);
 
