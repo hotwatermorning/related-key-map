@@ -25,18 +25,18 @@ mixin indirectly-related-key(id)
 
 mixin dominant-arrow
   .arrow-box
-    .arrow-box-title= "属調"
+    .arrow-box-title= dominant_key
     .up-arrow
 
 mixin subdominant-arrow
   .arrow-box
     .down-arrow
     .arrow-box-bottom-padding
-    .arrow-box-title= "下属調"
+    .arrow-box-title= subdominant_key
 
 mixin arrow-row(arrow_type)
   .arrow-row
-    .arrow-padding-side 
+    .arrow-padding-side
     +#{arrow_type}
     .arrow-padding-mid
     +#{arrow_type}
@@ -53,13 +53,13 @@ mixin subdominant-arrow-row
 mixin left-arrow
   .arrow-box
     .arrow-box-head-padding
-    .arrow-box-title= "同主調"
+    .arrow-box-title= parallel_key
     .left-arrow
 
 mixin right-arrow
   .arrow-box
     .arrow-box-head-padding
-    .arrow-box-title= "平行調"
+    .arrow-box-title= relative_key
     .right-arrow
 
 mixin link-icon(title, class_name, fa_class_name)
@@ -69,9 +69,18 @@ mixin link-icon(title, class_name, fa_class_name)
 
 block content
   .header-box
-    .header-text-box
+    .title-text-box
       h1
         a= title
+    .language-box
+      a
+        i(class=`fas fa-globe-asia` aria-hidden="true")
+        span.current-language= current_language
+      ul(class="items")
+        each lang_name, lang_id in language_list
+          li
+            a(class=`lang-${lang_id}`)
+              = `${lang_name}`
   .key-container
     .key-row
       +indirectly-related-key("key1")
@@ -106,6 +115,5 @@ block content
     .sns-link-box
       +link-icon("Tweet", "twitter", "fa-twitter")
       +link-icon("Facebook", "facebook", "fa-facebook-f")
-      +link-icon("Google+", "google", "fa-google-plus-g")
       +link-icon("はてなブックマーク", "hatebu", "fa-hatebu")
       +link-icon("Project Page", "github", "fa-github")
