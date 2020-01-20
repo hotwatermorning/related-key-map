@@ -62,25 +62,9 @@ mixin right-arrow
     .arrow-box-title= relative_key
     .right-arrow
 
-mixin link-icon(title, class_name, fa_class_name)
-  div(class!=`sns-button ${class_name}` style={display: "none"})
-    a(href="" title=title target="_blank")
-      i(class!=`fab fa-lg ${fa_class_name}` aria-hidden="true")
-
 block content
-  .header-box
-    .title-text-box
-      h1
-        a= title
-    .language-box
-      a
-        i(class=`fas fa-globe-asia` aria-hidden="true")
-        span.current-language= current_language
-      ul(class="items")
-        each lang_name, lang_id in language_list
-          li
-            a(class=`lang-${lang_id}`)
-              = `${lang_name}`
+  script(src="./index.bundle.js")
+  include header.pug
   .key-container
     .key-row
       +indirectly-related-key("key1")
@@ -108,12 +92,5 @@ block content
         .key-title
       .staff-box
         .staff#staff
-  .footer-box
-    .footer-text-box
-      = "© 2018 "
-      a(class="footer-site-link" href="https://diatonic.jp" target="_blank")= "diatonic.jp"
-    .sns-link-box
-      +link-icon("Tweet", "twitter", "fa-twitter")
-      +link-icon("Facebook", "facebook", "fa-facebook-f")
-      +link-icon("はてなブックマーク", "hatebu", "fa-hatebu")
-      +link-icon("Project Page", "github", "fa-github")
+  - var enable_sns_link = true
+  include footer.pug

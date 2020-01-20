@@ -1,0 +1,14 @@
+.header-box
+  .title-text-box
+    h1
+      a(href="/")= title
+  .language-box
+    a
+      i(class=`fas fa-globe-asia` aria-hidden="true")
+      span.current-language= current_language
+    ul(class="items")
+      each lang_name, lang_id in language_list
+        li
+          a(class=`lang-${lang_id}`)
+            = `${lang_name}`
+

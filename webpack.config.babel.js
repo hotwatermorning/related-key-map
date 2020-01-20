@@ -4,7 +4,8 @@ var webpack = require("webpack");
 module.exports = (env, args) => {
   return {
     entry: {
-      index : "./_src/js/index.js"
+      "index" : "./_src/js/index.js",
+      "site-documents": "./_src/js/site-documents.js"
     },
     output: {
       filename: "[name].bundle.js",

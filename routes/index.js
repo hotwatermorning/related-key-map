@@ -9,23 +9,6 @@ const kLanguageTable = {
   "zh-hant": "繁體中文",
 };
 
-class TextResource {
-  constructor() {
-    this.title = "Related Key Map";
-    this.keywords = "";
-    this.description = "";
-    this.dominant_key = "";
-    this.subdominant_key = "";
-    this.relative_key = "";
-    this.parallel_key = "";
-    this.current_language = "";
-    this.language_list = new Map();
-    for (var i in kLanguageTable) {
-      this.language_list[i] = kLanguageTable[i];
-    }
-  }
-};
-
 function getTextResource(lang) {
 
   var tr = {};
@@ -33,6 +16,8 @@ function getTextResource(lang) {
   tr["title"] = "Related Key Map";
   tr["current_language"] = kLanguageTable[lang];
   tr["language_list"] = kLanguageTable;
+  tr["privacy_policy_link_name"] = "Privacy Policy";
+  tr["disclaimer_link_name"] = "Disclaimer";
 
   switch(lang) {
     case "ja":
@@ -42,6 +27,10 @@ function getTextResource(lang) {
       tr["subdominant_key"] = "下属調";
       tr["relative_key"] = "平行調";
       tr["parallel_key"] = "同主調";
+      tr["privacy_policy_link_name"] = "プライバシーポリシー";
+      tr["privacy_policy_title"] = "プライバシーポリシー";
+      tr["disclaimer_link_name"] = "免責事項";
+      tr["disclaimer_title"] = "免責事項";
       break;
     case "zh-hans":
       tr["keywords"] = "调, 五度圈, 近关系调, 同主音调, 平行调";
@@ -101,49 +90,33 @@ function redirectIfNeeded(req, res, next) {
   return true;
 }
 
-/* GET home page. */
-router.get("/:root_key", function(req, res, next) {
-  debug_app("root_key");
-  debug_app(`url: ${req.url}`);
-  debug_app(`originalUrl: ${req.originalUrl}`);
-  debug_app(`host: ${req.headers.host}`);
+function create_handler(page_name) {
+  return function(req, res, next) {
+    debug_app(`page_name: ${page_name}`);
+    debug_app(`url: ${req.url}`);
+    debug_app(`originalUrl: ${req.originalUrl}`);
+    debug_app(`host: ${req.headers.host}`);
 
-  if(redirectIfNeeded(req, res, next)) {
-    return;
-  }
+    if(redirectIfNeeded(req, res, next)) {
+      return;
+    }
 
-  const lang = req.query.lang;
+    const lang = req.query.lang;
 
-  var tr = getTextResource(lang);
+    var tr = getTextResource(lang);
 
-  debug_app(`TextResource: ${tr}`);
-  debug_app(`language_list: ${tr.language_list}`);
-  for(id in tr.language_list) {
-    debug_app(`language: ${id} => ${tr.language_list[id]}`);
-  }
-  res.render('index', tr);
-});
+    debug_app(`TextResource: ${tr}`);
+    debug_app(`language_list: ${tr.language_list}`);
+    for(id in tr.language_list) {
+      debug_app(`language: ${id} => ${tr.language_list[id]}`);
+    }
+    res.render(page_name, tr);
+  };
+};
 
-router.get("/", function(req, res, next) {
-  debug_app("root");
-  debug_app(`url: ${req.url}`);
-  debug_app(`originalUrl: ${req.originalUrl}`);
-  debug_app(`host: ${req.headers.host}`);
-
-  if(redirectIfNeeded(req, res, next)) {
-    return;
-  }
-
-  const lang = req.query.lang;
-
-  var tr = getTextResource(lang);
-
-  debug_app(`TextResource: ${tr}`);
-  debug_app(`language_list: ${tr.language_list}`);
-  for(id in tr.language_list) {
-    debug_app(`language: ${id} => ${tr.language_list[id]}`);
-  }
-  res.render('index', tr);
-});
+router.get("/privacy-policy", create_handler("privacy-policy"));
+router.get("/disclaimer", create_handler("disclaimer"));
+router.get("/:root_key", create_handler("index"));
+router.get("/", create_handler("index"));
 
 module.exports = router;

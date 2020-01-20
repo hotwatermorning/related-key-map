@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  script(src="./site-documents.bundle.js")
+  include header.pug
+  .privacy-policy-content.site-document-text
+    h2= "プライバシーポリシーについて"
+    p= "当サイトでは、 Google の提供するアクセス解析サービス「Google アナリティクス」を使用しています。このため、データ収集の目的で Cookie を使用しますが、このデータは匿名で収集されており、個人を特定するものではありません。"
+    p
+      = "Google アナリティクスのデータ収集／処理の仕組みについては、「Google のサービスを使用するサイトやアプリから収集した情報の Google による使用」のページ"
+      a(href="https://policies.google.com/technologies/partner-sites")= "https://policies.google.com/technologies/partner-sites"
+      = "を参照下さい。"
+    p
+      = "Google アナリティクスのデータ収集をオプトアウトしたい場合は、 Google が提供している"
+      a(href="https://tools.google.com/dlpage/gaoptout")= "Google アナリティクス オプトアウト アドオン"
+      = "が利用できます。"
+  include footer.pug
+
