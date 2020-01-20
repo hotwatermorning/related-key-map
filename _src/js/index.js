@@ -623,7 +623,7 @@ $(() => {
     var lang = query.get("lang");
     if(lang === undefined) {
         console.log("[Error]: lang query parameter should be set");
-        lang = "zh-hant";
+        lang = "en";
     }
     kCurrentLanguage = lang;
 
