@@ -16,6 +16,7 @@ html {
 }
 
 body {
+  -webkit-text-size-adjust: 100%;
   overflow: hidden;
   background-color: hsl(0, 10%, 20%);
   margin: 0px;
@@ -554,6 +555,7 @@ body {
   font-family: var(--font-family), serif;
   color: hsl(0, 100%, 100%);
   margin: 40px;
+  font-size: 1em;
 
   a {
     color: #FFF;
@@ -567,14 +569,7 @@ body {
     border-left: solid 3px #EEE;
   }
 
-  h3 {
-    font-size: 110%;
+  p {
+    font-size: 100%;
   }
-}
-
-.privacy-policy {
-  font-family: var(--font-family), serif;
-  text-align: center;
-  font-size: 13px;
-  color: hsl(0, 100%, 100%);
 }

@@ -216,7 +216,7 @@ const setKey = (target_dom, root_index, is_major, enharmonic_mode, minor_scale_m
 
 function makeURL(key, enharmonic_mode, minor_scale_mode)
 {
-    var new_href 
+    var new_href
     = window.location.origin + "/" 
     + key.replace("#", "sharp").replace("b", "flat")
     + "?em=" + enharmonic_mode
@@ -263,6 +263,21 @@ function getKeyFromURL(url_string)
     return result;
 }
 
+function updateHrefLang()
+{
+    const path = window.location.origin + window.location.pathname;
+    var query = new URLSearchParams(window.location.search);
+
+    var links = window.document.querySelectorAll("link[rel=\"alternate\"]");
+    links.forEach(function(elem) {
+        query.delete("lang");
+        const hreflang = elem.getAttribute("hreflang");
+        const querylang = (hreflang === "x-default" ? "en" : hreflang);
+        query.set("lang", querylang);
+        elem.href = path + query;
+    });
+}
+
 // enharmonic_modeの設定は、クエリ文字列になっている方が良さそう
 function changeTargetKeyByURL(url_string)
 {
@@ -270,6 +285,7 @@ function changeTargetKeyByURL(url_string)
 
     if(res) {
         window.history.replaceState("", "", makeURL(res.key, res.enharmonic_mode, res.minor_scale_mode));
+        updateHrefLang();
         kCurrentEnharmonicMode = res.enharmonic_mode;
         kCurrentMinorScaleMode = res.minor_scale_mode;
         if(changeTargetKey(res.key)) {
@@ -283,6 +299,7 @@ function changeTargetKeyByURL(url_string)
 
     const url = new URL(url_string);
     window.history.replaceState("", "", url.toString());
+    updateHrefLang();
     changeTargetKey("C");
 };
 
@@ -299,6 +316,7 @@ function setKeyToURL(key, enharmonic_mode, minor_scale_mode) {
     if( !useCurrentURL && window.location.href !== new_href )
     {
         window.history.pushState("", "", new_href);
+        updateHrefLang();
     }
 
     const encoded_url = encodeURIComponent(window.location.href);
@@ -397,7 +415,7 @@ const kPitchIndex = {
 };
 
 function makeNotePlayable(id, pitches) {
-    if(AC === undefined) {
+    if(AC == null) {
         var AudioContext = window.AudioContext || window.webkitAudioContext;
         if(!AudioContext) {
             alert("WebAudio not supported");
@@ -621,8 +639,8 @@ function setDetailedKey(key_name, staff, render_context)
 $(() => {
     const query = new URLSearchParams(window.location.search);
     var lang = query.get("lang");
-    if(lang === undefined) {
-        console.log("[Error]: lang query parameter should be set");
+    if(lang == null) {
+        console.log("[Info]: lang query parameter is not defined");
         lang = "en";
     }
     kCurrentLanguage = lang;

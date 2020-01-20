@@ -5,14 +5,16 @@ var debug_app = require("debug")("app");
 const kLanguageTable = {
   "ja": "日本語",
   "en": "English",
-  "zh-hans": "简体中文",
-  "zh-hant": "繁體中文",
+  "zh-Hans": "简体中文",
+  "zh-Hant": "繁體中文",
 };
 
 function getTextResource(lang) {
+  debug_app(`getTextResource: ${lang}`);
 
   var tr = {};
 
+  tr["url"] = "https://related-key-map.diatonic.jp";
   tr["title"] = "Related Key Map";
   tr["current_language"] = kLanguageTable[lang];
   tr["language_list"] = kLanguageTable;
@@ -32,7 +34,7 @@ function getTextResource(lang) {
       tr["disclaimer_link_name"] = "免責事項";
       tr["disclaimer_title"] = "免責事項";
       break;
-    case "zh-hans":
+    case "zh-Hans":
       tr["keywords"] = "调, 五度圈, 近关系调, 同主音调, 平行调";
       tr["description"] = "显示近关系调于给的调。";
       tr["dominant_key"] = "属调";
@@ -40,7 +42,7 @@ function getTextResource(lang) {
       tr["relative_key"] = "平行调";
       tr["parallel_key"] = "同主音调";
       break;
-    case "zh-hant":
+    case "zh-Hant":
       tr["keywords"] = "調, 五度圈, 近關係調, 同主音調, 平行調";
       tr["description"] = "顯示近關係調於給的調。";
       tr["dominant_key"] = "屬調";
@@ -63,25 +65,23 @@ function getTextResource(lang) {
   return tr;
 }
 
-function shouldRedirect(req) {
+function getLanguageId(req) {
   var lang = req.query.lang;
-  if(lang === undefined) { lang = ""; }
-  lang = lang.toLowerCase();
+  if(lang == null) { lang = ""; }
+  lang = lang.toString();
   debug_app("Language in query: " + lang);
 
-  return (kLanguageTable[lang] === undefined);
+  for(key in kLanguageTable) {
+    if(key.toLowerCase() === lang.toLowerCase()) {
+      return key;
+    }
+  }
+
+  return undefined;
 }
 
 // @return true if redirected.
-function redirectIfNeeded(req, res, next) {
-  if(shouldRedirect(req) === false) { return false; }
-
-  var lang = req.acceptsLanguages(Object.keys(kLanguageTable));
-  debug_app("Language accepted: " + lang);
-  if(lang === false) {
-    lang = "en";
-  }
-
+function redirect(req, res, next, lang) {
   var url = new URL(req.url, `${req.protocol}://${req.headers.host}`);
   url.searchParams.delete("lang");
   url.searchParams.append("lang", lang);
@@ -92,24 +92,41 @@ function redirectIfNeeded(req, res, next) {
 
 function create_handler(page_name) {
   return function(req, res, next) {
+    const query_lang = getLanguageId(req);
+    debug_app("Language queried: " + query_lang);
+
+    if(query_lang == null) {
+      var accept_langs = req.get("Accept-Language");
+      debug_app("Accept-Language: " + accept_langs);
+      if(accept_langs == null) {
+        debug_app("Accept-Language is not defined.");
+        // クローラによるアクセスとみなす。
+      } else {
+        var accepted_lang = req.acceptsLanguages(Object.keys(kLanguageTable));
+        debug_app("Language accepted: " + accepted_lang);
+        if(accepted_lang === false) {
+          accepted_lang = "en";
+        }
+
+        redirect(req, res, next, accepted_lang);
+        return;
+      }
+    }
+
     debug_app(`page_name: ${page_name}`);
     debug_app(`url: ${req.url}`);
     debug_app(`originalUrl: ${req.originalUrl}`);
     debug_app(`host: ${req.headers.host}`);
 
-    if(redirectIfNeeded(req, res, next)) {
-      return;
-    }
-
-    const lang = req.query.lang;
-
-    var tr = getTextResource(lang);
+    var lang_to_use = (query_lang || "en");
+    var tr = getTextResource(lang_to_use);
 
     debug_app(`TextResource: ${tr}`);
     debug_app(`language_list: ${tr.language_list}`);
     for(id in tr.language_list) {
       debug_app(`language: ${id} => ${tr.language_list[id]}`);
     }
+
     res.render(page_name, tr);
   };
 };
