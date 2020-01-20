@@ -274,7 +274,7 @@ function updateHrefLang()
         const hreflang = elem.getAttribute("hreflang");
         const querylang = (hreflang === "x-default" ? "en" : hreflang);
         query.set("lang", querylang);
-        elem.href = path + query;
+        elem.href = path + "?" + query;
     });
 }
 
