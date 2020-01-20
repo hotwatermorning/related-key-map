@@ -1,0 +1,5 @@
+mixin link-icon(title, class_name, fa_class_name)
+  div(class!=`sns-button ${class_name}` style={display: "none"})
+    a(href="" title=title target="_blank")
+      i(class!=`fab fa-lg ${fa_class_name}` aria-hidden="true")
+

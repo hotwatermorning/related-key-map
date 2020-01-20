@@ -1,0 +1,17 @@
+head
+  script(async src="https://www.googletagmanager.com/gtag/js?id=UA-17194470-5")
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-17194470-5');
+  title= title
+  meta(name="keywords", content=keywords)
+  meta(name="description", content=description)
+  link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cardo|Montserrat")
+  link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" crossorigin="anonymous")
+  link(rel="icon", href="./images/favicon.ico")
+  link(rel="alternate" hreflang="x-default" href=`${url}/?lang=en`)
+  each lang_name, lang_id in language_list
+    link(rel="alternate" hreflang=`${lang_id}` href=`${url}/?lang=${lang_id}`)
+

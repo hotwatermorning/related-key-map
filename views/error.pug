@@ -1,6 +1,8 @@
-extends layout
-
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+doctype html
+html
+  include html_head.pug
+  script(src="./site-documents.bundle.js")
+  body
+    h1= message
+    h2= error.status
+    pre #{error.stack}

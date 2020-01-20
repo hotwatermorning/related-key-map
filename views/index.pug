@@ -1,5 +1,3 @@
-extends layout
-
 mixin key(key_name, chords, style)
   div(class!=attributes.class, id!=attributes.id)
     a(href="#inline" class="inline")
@@ -62,35 +60,40 @@ mixin right-arrow
     .arrow-box-title= relative_key
     .right-arrow
 
-block content
+include link-icon.pug
+
+doctype html
+html
+  include html_head.pug
   script(src="./index.bundle.js")
-  include header.pug
-  .key-container
-    .key-row
-      +indirectly-related-key("key1")
-      +left-arrow
-      +directly-related-key("key2")
-      +right-arrow
-      +indirectly-related-key("key3")
-    +dominant-arrow-row
-    .key-row#tonic_key_row
-      +directly-related-key("key4")
-      +left-arrow
-      +tonic-key("key5")
-      +right-arrow
-      +directly-related-key("key6")
-    +subdominant-arrow-row
-    .key-row#subdominant_key_row
-      +indirectly-related-key("key7")
-      +left-arrow
-      +directly-related-key("key8")
-      +right-arrow
-      +indirectly-related-key("key9")
-  .key-detail-box#inline(style={display: "none"})
-    .key-detail
-      .key-detail-heading
-        .key-title
-      .staff-box
-        .staff#staff
-  - var enable_sns_link = true
-  include footer.pug
+  body
+    include header.pug
+    .key-container
+      .key-row
+        +indirectly-related-key("key1")
+        +left-arrow
+        +directly-related-key("key2")
+        +right-arrow
+        +indirectly-related-key("key3")
+      +dominant-arrow-row
+      .key-row#tonic_key_row
+        +directly-related-key("key4")
+        +left-arrow
+        +tonic-key("key5")
+        +right-arrow
+        +directly-related-key("key6")
+      +subdominant-arrow-row
+      .key-row#subdominant_key_row
+        +indirectly-related-key("key7")
+        +left-arrow
+        +directly-related-key("key8")
+        +right-arrow
+        +indirectly-related-key("key9")
+    .key-detail-box#inline(style={display: "none"})
+      .key-detail
+        .key-detail-heading
+          .key-title
+        .staff-box
+          .staff#staff
+    - var enable_sns_link = true
+    include footer.pug

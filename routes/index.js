@@ -102,10 +102,23 @@ function create_handler(page_name) {
         debug_app("Accept-Language is not defined.");
         // クローラによるアクセスとみなす。
       } else {
-        var accepted_lang = req.acceptsLanguages(Object.keys(kLanguageTable));
+        var keys = Object.keys(kLanguageTable);
+        keys.push("zh-CN");
+        keys.push("zh-TW");
+        keys.push("zh-HK");
+        keys.push("zh");
+        var accepted_lang = req.acceptsLanguages(keys);
         debug_app("Language accepted: " + accepted_lang);
         if(accepted_lang === false) {
           accepted_lang = "en";
+        }
+
+        if(accepted_lang.startsWith("zh")) {
+          if(accepted_lang.indexOf("-TW") !== -1 || accepted_lang.indexOf("-HK") !== -1) {
+            accepted_lang = "zh-Hant";
+          } else {
+            accepted_lang = "zh-Hans";
+          }
         }
 
         redirect(req, res, next, accepted_lang);
