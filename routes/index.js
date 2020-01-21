@@ -121,8 +121,10 @@ function create_handler(page_name) {
           }
         }
 
-        redirect(req, res, next, accepted_lang);
-        return;
+        if(req.headers['user-agent'].toLowerCase().indexOf("googlebot") === -1) {
+          redirect(req, res, next, accepted_lang);
+          return;
+        }
       }
     }
 

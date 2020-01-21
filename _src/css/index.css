@@ -127,6 +127,8 @@ body {
 
       > a {
         display: block;
+        text-decoration: none;
+        color: #FFF;
 
         &:hover {
           background: #111;

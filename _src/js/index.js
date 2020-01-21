@@ -220,9 +220,10 @@ function makeURL(key, enharmonic_mode, minor_scale_mode)
     = window.location.origin + "/" 
     + key.replace("#", "sharp").replace("b", "flat")
     + "?em=" + enharmonic_mode
-    + "&ms=" + minor_scale_mode
-    + "&lang=" + kCurrentLanguage
-    ;
+    + "&ms=" + minor_scale_mode;
+    if(kCurrentLanguage) {
+        new_href += "&lang=" + kCurrentLanguage;
+    }
 
     return new_href;
 }
@@ -263,7 +264,7 @@ function getKeyFromURL(url_string)
     return result;
 }
 
-function updateHrefLang()
+function updateLinkUrls()
 {
     const path = window.location.origin + window.location.pathname;
     var query = new URLSearchParams(window.location.search);
@@ -276,6 +277,14 @@ function updateHrefLang()
         query.set("lang", querylang);
         elem.href = path + "?" + query;
     });
+
+    var language_menu_items = $(".language-box > ul > li > a");
+
+    $.each(language_menu_items, function(i, elem) {
+        query.delete("lang");
+        query.set("lang", elem.className.slice(5));
+        elem.href = path + "?" + query;
+    });
 }
 
 // enharmonic_modeの設定は、クエリ文字列になっている方が良さそう
@@ -285,7 +294,7 @@ function changeTargetKeyByURL(url_string)
 
     if(res) {
         window.history.replaceState("", "", makeURL(res.key, res.enharmonic_mode, res.minor_scale_mode));
-        updateHrefLang();
+        updateLinkUrls();
         kCurrentEnharmonicMode = res.enharmonic_mode;
         kCurrentMinorScaleMode = res.minor_scale_mode;
         if(changeTargetKey(res.key)) {
@@ -299,7 +308,7 @@ function changeTargetKeyByURL(url_string)
 
     const url = new URL(url_string);
     window.history.replaceState("", "", url.toString());
-    updateHrefLang();
+    updateLinkUrls();
     changeTargetKey("C");
 };
 
@@ -308,15 +317,17 @@ function setKeyToURL(key, enharmonic_mode, minor_scale_mode) {
     const new_href = makeURL(key, enharmonic_mode, minor_scale_mode);
 
     // "/"へのリクエストのときは、locationを変更しない
+    function get_lang_query(lang) { return (lang ? `?lang=${lang}` : ""); };
+    const test_url = window.location.origin + "/" + get_lang_query(kCurrentLanguage);
     const useCurrentURL
-    = (window.location.href === (window.location.origin + `/?lang=${kCurrentLanguage}`))
+    = (window.location.href === test_url)
     && key === kDefaultKey
     && enharmonic_mode === kDefaultEnharmonicMode;
 
     if( !useCurrentURL && window.location.href !== new_href )
     {
         window.history.pushState("", "", new_href);
-        updateHrefLang();
+        updateLinkUrls();
     }
 
     const encoded_url = encodeURIComponent(window.location.href);
@@ -641,7 +652,6 @@ $(() => {
     var lang = query.get("lang");
     if(lang == null) {
         console.log("[Info]: lang query parameter is not defined");
-        lang = "en";
     }
     kCurrentLanguage = lang;
 
@@ -690,14 +700,6 @@ $(window).on("load", () => {
     window.onpopstate = function(e) {
         changeTargetKeyByURL(window.location.href);
     };
-
-    $(".language-box > ul > li > a").on("click", function(e) {
-        console.log(`change language: ${e.delegateTarget.className}`);
-        var query = new URLSearchParams(window.location.search);
-        query.delete("lang");
-        query.set("lang", e.delegateTarget.className.slice(5));
-        window.location.search = query;
-    });
 
     $(".sns-button").css("display", "block");
 
