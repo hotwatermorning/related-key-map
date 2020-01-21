@@ -22,12 +22,12 @@ mixin indirectly-related-key(id)
   +key(id=id, class="indirectly-related-key")
 
 mixin dominant-arrow
-  .arrow-box
+  .arrow-box.vertical
     .arrow-box-title= dominant_key
     .up-arrow
 
 mixin subdominant-arrow
-  .arrow-box
+  .arrow-box.vertical
     .down-arrow
     .arrow-box-bottom-padding
     .arrow-box-title= subdominant_key
