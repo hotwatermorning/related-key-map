@@ -1,0 +1,15 @@
+include link-icon.pug
+
+doctype html
+html
+  include html_head.pug
+  script(src="./site-documents.bundle.js")
+  body
+    include header.pug
+    .about-this-site-content.site-document-text
+      h2= about_this_site_title
+      each paragraph in about_this_site_paragraphs
+        p!= paragraph
+    include footer.pug
+
+

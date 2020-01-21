@@ -17,9 +17,19 @@ function getTextResource(lang) {
   tr["url"] = "https://related-key-map.diatonic.jp";
   tr["title"] = "Related Key Map";
   tr["current_language"] = kLanguageTable[lang];
+  tr["current_language_id"] = lang;
   tr["language_list"] = kLanguageTable;
   tr["privacy_policy_link_name"] = "Privacy Policy";
   tr["disclaimer_link_name"] = "Disclaimer";
+  tr["about_this_site_link_name"] = "About This Site";
+  tr["about_this_site_title"] = "About This Site";
+  tr["about_this_site_paragraphs"] = [
+    "This site shows the closely related keys and its diatonic chords to a musical key.",
+    "If you click a surrounding key, the key moves to the center and surrounding keys are updated.",
+    "Clicking ⊕ button shows the chord components of the diatonic chords of the key, on a staff.",
+    "To listen chord sounds, click notes on the staff.",
+    'Webmaster: <a href="https://twitter.com/hotwatermorning" target="_blank">@hotwatermorning</a>',
+  ];
 
   switch(lang) {
     case "ja":
@@ -33,6 +43,15 @@ function getTextResource(lang) {
       tr["privacy_policy_title"] = "プライバシーポリシー";
       tr["disclaimer_link_name"] = "免責事項";
       tr["disclaimer_title"] = "免責事項";
+      tr["about_this_site_link_name"] = "このサイトについて";
+      tr["about_this_site_title"] = "このサイトについて";
+      tr["about_this_site_paragraphs"] = [
+        "このサイトは、ある音楽の調に対する近親調（近い関係にある調）とダイアトニックコードを表示します。",
+        "周辺にある調をクリックすると、その調を中心にして近親調を表示します。",
+        "⊕ボタンをクリックすると、その調におけるダイアトニックコードの構成音を五線譜で表示します。",
+        "各コードの音符をクリックすると、そのコードの音が鳴ります。",
+        '管理者: <a href="https://twitter.com/hotwatermorning" target="_blank">@hotwatermorning</a>',
+      ];
       break;
     case "zh-Hans":
       tr["keywords"] = "调, 五度圈, 近关系调, 同主音调, 平行调";
@@ -148,6 +167,7 @@ function create_handler(page_name) {
 
 router.get("/privacy-policy", create_handler("privacy-policy"));
 router.get("/disclaimer", create_handler("disclaimer"));
+router.get("/about", create_handler("about-this-site"));
 router.get("/:root_key", create_handler("index"));
 router.get("/", create_handler("index"));
 

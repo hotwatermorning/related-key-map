@@ -7,9 +7,11 @@ div(class="footer-box" onclick="")
       +link-icon("Project Page", "github", "fa-github")
   ul(class="footer-link-box")
     li
-      a(href="/privacy-policy" class="footer-link")= privacy_policy_link_name
+      a(href=`/about?lang=${current_language_id}` class="footer-link")= about_this_site_link_name
     li
-      a(href="/disclaimer" class="footer-link")= disclaimer_link_name
+      a(href=`/privacy-policy?lang=${current_language_id}` class="footer-link")= privacy_policy_link_name
     li
-      a(class="footer-link" href="https://diatonic.jp" target="_blank")= "diatonic.jp"
+      a(href=`/disclaimer?lang=${current_language_id}` class="footer-link")= disclaimer_link_name
+    li
+      a(href="https://diatonic.jp" class="footer-link" target="_blank")= "diatonic.jp"
 

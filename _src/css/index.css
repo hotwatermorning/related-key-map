@@ -582,6 +582,7 @@ body {
   color: hsl(0, 100%, 100%);
   margin: 40px;
   font-size: 1em;
+  letter-spacing: 0.05em;
 
   a {
     color: #FFF;
