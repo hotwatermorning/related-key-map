@@ -114,7 +114,7 @@ function create_handler(page_name) {
         }
 
         if(accepted_lang.startsWith("zh")) {
-          if(accepted_lang.indexOf("-TW") !== -1 || accepted_lang.indexOf("-HK") !== -1) {
+          if(accepted_lang.indexOf("-Hant") !== -1 || accepted_lang.indexOf("-TW") !== -1 || accepted_lang.indexOf("-HK") !== -1) {
             accepted_lang = "zh-Hant";
           } else {
             accepted_lang = "zh-Hans";
