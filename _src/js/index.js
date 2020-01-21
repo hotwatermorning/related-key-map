@@ -273,9 +273,11 @@ function updateLinkUrls()
     links.forEach(function(elem) {
         query.delete("lang");
         const hreflang = elem.getAttribute("hreflang");
-        const querylang = (hreflang === "x-default" ? "en" : hreflang);
-        query.set("lang", querylang);
-        elem.href = path + "?" + query;
+        if(hreflang !== "x-default") {
+            query.set("lang", hreflang);
+        }
+        const query_string = query.toString();
+        elem.href = path + (query_string !== "" ? "?" : "") + query_string;
     });
 
     var language_menu_items = $(".language-box > ul > li > a");
