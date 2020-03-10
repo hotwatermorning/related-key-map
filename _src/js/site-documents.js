@@ -3,9 +3,9 @@ import "../css/index.css";
 import { updateLinkUrls } from "./common.js";
 
 $(window).on("load", () => {
-    window.onpopstate = function(e) {
-        changeTargetKeyByURL(window.location.href);
-    };
+  window.onpopstate = function(e) {
+    changeTargetKeyByURL(window.location.href);
+  };
 
-    updateLinkUrls();
+  updateLinkUrls();
 });
