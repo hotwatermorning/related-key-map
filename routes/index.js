@@ -33,6 +33,7 @@ function getTextResource(lang) {
 
   switch(lang) {
     case "ja":
+      tr["title"] = "関係調マップ";
       tr["keywords"] = "調, 五度圏, 近親調, 同主調, 平行調";
       tr["description"] = "ある音楽の調に対する近親調を表示します。";
       tr["dominant_key"] = "属調";
@@ -54,6 +55,7 @@ function getTextResource(lang) {
       ];
       break;
     case "zh-Hans":
+      tr["title"] = "关系调地图";
       tr["keywords"] = "调, 五度圈, 近关系调, 同主音调, 平行调";
       tr["description"] = "显示近关系调于给的调。";
       tr["dominant_key"] = "属调";
@@ -62,6 +64,7 @@ function getTextResource(lang) {
       tr["parallel_key"] = "同主音调";
       break;
     case "zh-Hant":
+      tr["title"] = "關係調地圖";
       tr["keywords"] = "調, 五度圈, 近關係調, 同主音調, 平行調";
       tr["description"] = "顯示近關係調於給的調。";
       tr["dominant_key"] = "屬調";
