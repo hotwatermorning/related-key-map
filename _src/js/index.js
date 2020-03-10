@@ -3,6 +3,8 @@ import minimum_key_signature from "../fonts/Minimum_key_signature-Regular.ttf";
 require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
+import { updateLinkUrls } from "./common.js";
+
 var AC = undefined;
 var VF = undefined;
 import(
@@ -262,31 +264,6 @@ function getKeyFromURL(url_string)
     }
 
     return result;
-}
-
-function updateLinkUrls()
-{
-    const path = window.location.origin + window.location.pathname;
-    var query = new URLSearchParams(window.location.search);
-
-    var links = window.document.querySelectorAll("link[rel=\"alternate\"]");
-    links.forEach(function(elem) {
-        query.delete("lang");
-        const hreflang = elem.getAttribute("hreflang");
-        if(hreflang !== "x-default") {
-            query.set("lang", hreflang);
-        }
-        const query_string = query.toString();
-        elem.href = path + (query_string !== "" ? "?" : "") + query_string;
-    });
-
-    var language_menu_items = $(".language-box > ul > li > a");
-
-    $.each(language_menu_items, function(i, elem) {
-        query.delete("lang");
-        query.set("lang", elem.className.slice(5));
-        elem.href = path + "?" + query;
-    });
 }
 
 // enharmonic_modeの設定は、クエリ文字列になっている方が良さそう
