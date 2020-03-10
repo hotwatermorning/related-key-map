@@ -1,6 +1,6 @@
 div(class="header-box" onclick="")
   .title-text-box
-    h1
+    h1(class=`font-style-${current_language_id}`)
       a(href=`/?lang=${current_language_id}`)= title
   div(class="language-box" ontouchstart="")
     a
@@ -9,6 +9,6 @@ div(class="header-box" onclick="")
     ul(class="items")
       each lang_name, lang_id in language_list
         li
-          a(class=`lang-${lang_id}`)
+          a(class=`lang-${lang_id} font-style-${lang_id}`)
             = `${lang_name}`
 

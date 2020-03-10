@@ -46,6 +46,26 @@ body {
   justify-content: space-between;
 }
 
+.font-style-en {
+  font-family: "Cardo", serif;
+  font-weight: normal;
+}
+
+.font-style-ja {
+  font-family: "Noto Serif JP";
+  font-display: block;
+}
+
+.font-style-zh-Hant {
+  font-family: "Noto Serif TC";
+  font-display: block;
+}
+
+.font-style-zh-Hans {
+  font-family: "Noto Serif SC";
+  font-display: block;
+}
+
 .title-text-box {
   height: 90px;
   line-height: 90px;
@@ -54,8 +74,6 @@ body {
   color: hsl(0, 100%, 100%);
 
   h1 {
-    font-family: "Cardo", serif;
-    font-weight: normal;
     -webkit-margin-before: 0em;
     -webkit-margin-after: 0em;
 
