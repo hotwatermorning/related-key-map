@@ -55,6 +55,26 @@ module.exports = (env, args) => {
             context: "",
           }
         },
+      },{
+        test: /\.(mp3)$/,
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "[path][name].[ext]",
+            outputPath: (url, resourcePath, context) => {
+              var dir = path.dirname(url);
+              var relative_path = path.relative("_src", dir);
+              var base = path.basename(url);
+              return path.join(relative_path, base);
+            },
+            publicPath: (url, resourcePath, context) => {
+              var dir = path.dirname(url);
+              var relative_path = path.relative("_src", dir);
+              var base = path.basename(url);
+              return path.join(relative_path, base);
+            },
+          }
+        },
       }]
     },
     plugins: [

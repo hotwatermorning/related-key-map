@@ -9,6 +9,8 @@ const kLanguageTable = {
   "zh-Hant": "繁體中文",
 };
 
+const kWaveformTypes = [ "sine", "sawtooth", "square", "triangle", "piano", "strings", "guitar" ];
+
 function getTextResource(lang) {
   debug_app(`getTextResource: ${lang}`);
 
@@ -30,6 +32,7 @@ function getTextResource(lang) {
     "To listen chord sounds, click notes on the staff.",
     'Webmaster: <a href="https://twitter.com/hotwatermorning" target="_blank">@hotwatermorning</a>',
   ];
+  tr["waveform_type_list"] = kWaveformTypes;
 
   switch(lang) {
     case "ja":

@@ -1,12 +1,18 @@
 import expand_image from "../images/expand.png";
+import speaker_image from "../images/speaker.png";
+import waveform_image from "../images/waveform.png";
 import minimum_key_signature from "../fonts/Minimum_key_signature-Regular.ttf";
+import volume_minus from "../images/minus.png";
+import volume_plus from "../images/plus.png";
 require("../images/favicon.ico");
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
 import { updateLinkUrls } from "./common.js";
+import * as Tone from "tone";
 
 var AC = undefined;
 var VF = undefined;
+
 import(
   /* webpackChunkName: "vexflow" */
   /* webpackMode: "lazy" */
@@ -30,6 +36,16 @@ const MinorScaleMode = {
   kMelodic: "melodic",
 };
 
+const WaveformType = {
+  kSine: "sine",
+  kSawtooth: "sawtooth",
+  kSquare: "square",
+  kTriangle: "triangle",
+  kPiano: "piano",
+  kStrings: "strings",
+  kGuitar: "guitar",
+};
+
 const kDefaultKey = "C";
 
 const kDefaultEnharmonicMode = EnharmonicMode.kSharp;
@@ -39,6 +55,11 @@ const kDefaultMinorScaleMode = MinorScaleMode.kNatural;
 var kCurrentMinorScaleMode = kDefaultMinorScaleMode;
 
 var kCurrentLanguage = "";
+
+var kCurrentWaveformType = WaveformType.kStrings;
+
+//! dB で表す
+var kCurrentVolume = -6;
 
 const ScaleShiftDirection = {
   kDominant: 0,
@@ -420,37 +441,93 @@ function makeNotePlayable(id, pitches) {
     return 440.0 * Math.pow(2.0, (note_number - kBaseNoteNumber) / 12.0);
   }
 
-  function playback() {
+  // @param level 音量をデシベルで表したもの。最大を 0dB とする。
+  // @param length ルート音の長さ（秒）
+  // @param shift 音をずらして鳴らすタイミング（秒）
+  function playbackSynthesized(waveform_type, level, duration, shift) {
+    // サンプル波形よりも合成波形のほうが若干音が大きく聞こえるので、音量を下げる。
+    level -= 3;
+    // この2つの波形は音量が大きく聞こえがちなので、少し音量を下げる。
+    if(waveform_type === WaveformType.kSquare || waveform_type === WaveformType.kSawtooth) {
+      level -= 5;
+    }
     const now = AC.currentTime;
-    const attackTime = 0.01;
-    const decayTime = 1.5;
-    const releaseTime = 0.3;
-    const duration = 0.2;
-    const maxLevel = 0.25;
-    const sustainLevel = 0.25;
+    const attack_time = 0.01;
+    const release_time = 0.05;
 
-    var g = AC.createGain();
+    const gain = Math.pow(10, level / 20.0)
+
     for(var i = 0; i < pitches.length; ++i) {
+
+      const start_time = now + (i * shift)
+      const note_duration = duration - attack_time - (i * shift) - release_time;
+      if(note_duration <= 0) { continue; }
+
+      var g = AC.createGain();
+      g.gain.setValueAtTime(0.0, start_time);
+      g.gain.linearRampToValueAtTime(gain, start_time + attack_time);
+      g.gain.setValueAtTime(gain, start_time + attack_time + note_duration);
+      g.gain.linearRampToValueAtTime(0, start_time + attack_time + note_duration + release_time);
+
       var vco = AC.createOscillator();
       vco.frequency.value = noteNumberToHz(pitches[i]);
-      vco.type = "sine";
-      vco.start(now + i * 0.2);
-      vco.stop(now + 3);
+      vco.type = waveform_type;
+      vco.start(start_time);
+      vco.stop(start_time + attack_time + note_duration + release_time);
       vco.connect(g);
+      g.connect(AC.destination);
     }
-
-    g.gain.setValueAtTime(0.0, now);
-    g.gain.linearRampToValueAtTime(maxLevel, now + attackTime);
-    g.gain.linearRampToValueAtTime(sustainLevel * maxLevel,
-      now + attackTime + decayTime);
-    g.gain.linearRampToValueAtTime(sustainLevel * maxLevel,
-      now + attackTime + decayTime + duration);
-    g.gain.linearRampToValueAtTime(0,
-      now + attackTime + decayTime + duration + releaseTime);
-
-    g.connect(AC.destination);
   };
 
+  function playbackSample(waveform_type, level, duration, shift) {
+    // String のサンプルは他のサンプルよりも若干音が小さく聞こえるので、大きくする。
+    if(waveform_type == WaveformType.kStrings) {
+      level += 3;
+    }
+    var p1 = import("../audio/" + waveform_type + "/A3.mp3");
+    var p2 = import("../audio/" + waveform_type + "/E4.mp3");
+    var p3 = import("../audio/" + waveform_type + "/B4.mp3");
+    var p4 = import("../audio/" + waveform_type + "/Fsharp5.mp3");
+    var p5 = import("../audio/" + waveform_type + "/Csharp6.mp3");
+    Promise.all([p1, p2, p3, p4, p5]).then(function(values) {
+      var s = new Tone.Sampler({
+        "A3" : "audio/" + waveform_type + "/A3.mp3",
+        "E4" : "audio/" + waveform_type + "/E4.mp3",
+        "B4" : "audio/" + waveform_type + "/B4.mp3",
+        "F#5" : "audio/" + waveform_type + "/Fsharp5.mp3",
+        "C#6" : "audio/" + waveform_type + "/Csharp6.mp3",
+      }, function() {
+        s.volume.value = level;
+        for(var i = 0; i < pitches.length; ++i) {
+          const start_time = i * shift;
+          const note_duration = duration - (i * shift);
+          if(note_duration <= 0) { continue; }
+
+          const pitch = pitches[i];
+          const kPitchClasses = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+          const octave = ((pitch / 12) - 1).toString();
+          const pitch_class = kPitchClasses[pitch % 12];
+
+          s.triggerAttackRelease(pitch_class + octave, note_duration, "+" + start_time.toString());
+        }
+      }).toMaster();
+    });
+  }
+
+  function playback() {
+    if(kCurrentVolume <= -48.0) { return; }
+    const wt = kCurrentWaveformType;
+
+    // スライダーの 0dB をそのまま再生すると、サンプルを同時に再生したときに音割れが起こるので、
+    // 音量を1/4に下げておく。
+    const vol = kCurrentVolume - 12;
+
+    if(wt == WaveformType.kPiano || wt == WaveformType.kStrings || wt == WaveformType.kGuitar) {
+      playbackSample(wt, vol, 1.4, 0.2);
+    } else {
+      playbackSynthesized(wt, vol, 1.4, 0.2);
+    }
+  }
 
   $(document).on("touchstart mousedown", `#vf-${id}`, function(e) {
     e.preventDefault();
@@ -636,6 +713,66 @@ $(() => {
 
   $(".header-text-box > h1 > a").attr("href", window.location.origin);
   $(".expand-image").attr("src", expand_image);
+  $(".speaker-image").attr("src", speaker_image);
+  $(".waveform-image").attr("src", waveform_image);
+
+  var vdm = $(".volume-direction-minus");
+  var vdp = $(".volume-direction-plus");
+
+  vdm.attr("src", volume_minus);
+  vdp.attr("src", volume_plus);
+
+  vdm.on("click", function() {
+    // todo: sliderの値を小さくする。
+  });
+  vdp.on("click", function() {
+    // todo: sliderの値を大きくする。
+  });
+
+  var st = localStorage;
+
+  var volume_slider = document.querySelector("#volume_slider");
+  var wt_listbox = document.querySelector("#waveform_type_listbox");
+
+
+  // waveform type の読み込み
+  {
+    var saved_wt = st.getItem("waveform-type");
+    var index = Object.values(WaveformType).indexOf(saved_wt);
+    if(index == -1) {
+      saved_wt = WaveformType.kSine;
+      index = 0;
+    }
+
+    kCurrentWaveformType = saved_wt;
+    wt_listbox.options.selectedIndex = index;
+  }
+
+  // volume の読み込み
+  {
+    var saved_volume = st.getItem("volume");
+    var volume = parseFloat(saved_volume);
+    if(isNaN(volume)) {
+      volume_slider.value = (-6).toString();
+    } else {
+      volume_slider.value = volume.toString();
+    }
+  }
+
+  volume_slider.addEventListener("change", function(e) {
+    kCurrentVolume = e.target.value;
+    st.setItem("volume", kCurrentVolume.toString());
+  });
+
+  wt_listbox.addEventListener("change", function(e) {
+    kCurrentWaveformType = e.target.value;
+    st.setItem("waveform-type", kCurrentWaveformType);
+  });
+
+  document.querySelector('.menu-trigger').addEventListener('click', function() {
+      document.querySelector('.menu-trigger').classList.toggle('active');
+      document.querySelector('.key-detail-setting').classList.toggle('active');
+  });
 
   for(var i = 1; i <= 9; ++i) {
     $(`#key${i}`).on("click", function(e) {
@@ -687,6 +824,9 @@ $(window).on("load", () => {
     width: 900,
     height: 400,
     before_open: function(e) {
+      document.querySelector('.menu-trigger').classList.remove('active');
+      document.querySelector('.key-detail-setting').classList.remove('active');
+
       e.stopPropagation();
 
       var staffDom = $("#staff");

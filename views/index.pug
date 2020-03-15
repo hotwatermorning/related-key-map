@@ -95,5 +95,27 @@ html
           .key-title
         .staff-box
           .staff#staff
+      .key-detail-setting
+        .key-detail-button-box
+          .key-detail-button
+            a(class="menu-trigger")
+              span
+              span
+        .key-detail-content-box
+          ul
+            li
+              .speaker-image-box
+                img(class="setting-item-icon speaker-image")
+              img(id="volume_direction_minus" class="volume-direction-label volume-direction-minus")
+              input(type="range" id="volume_slider" class="volume-slider" min="-48" max="0")
+              img(id="volume_direction_plus" class="volume-direction-label volume-direction-plus")
+            li
+              .waveform-image-box
+                img(class="setting-item-icon waveform-image")
+              div(class="waveform-type-list-box")
+                select(id="waveform_type_listbox" name="waveform_type" class="waveform-type-listbox minimal")
+                  each waveform_type in waveform_type_list
+                    option(value=`${waveform_type}`)
+                      = `${waveform_type}`
     - var enable_sns_link = true
     include footer.pug
