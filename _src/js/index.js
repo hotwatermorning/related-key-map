@@ -480,38 +480,42 @@ function makeNotePlayable(id, pitches) {
   };
 
   function playbackSample(waveform_type, level, duration, shift) {
+
+    // これがないと、モバイル環境で正しく音が鳴らなかった。
+    Tone.setContext(AC);
+
     // String のサンプルは他のサンプルよりも若干音が小さく聞こえるので、大きくする。
     if(waveform_type == WaveformType.kStrings) {
       level += 3;
     }
-    var p1 = import("../audio/" + waveform_type + "/A3.mp3");
-    var p2 = import("../audio/" + waveform_type + "/E4.mp3");
-    var p3 = import("../audio/" + waveform_type + "/B4.mp3");
-    var p4 = import("../audio/" + waveform_type + "/Fsharp5.mp3");
-    var p5 = import("../audio/" + waveform_type + "/Csharp6.mp3");
-    Promise.all([p1, p2, p3, p4, p5]).then(function(values) {
-      var s = new Tone.Sampler({
-        "A3" : "audio/" + waveform_type + "/A3.mp3",
-        "E4" : "audio/" + waveform_type + "/E4.mp3",
-        "B4" : "audio/" + waveform_type + "/B4.mp3",
-        "F#5" : "audio/" + waveform_type + "/Fsharp5.mp3",
-        "C#6" : "audio/" + waveform_type + "/Csharp6.mp3",
-      }, function() {
-        s.volume.value = level;
-        for(var i = 0; i < pitches.length; ++i) {
-          const start_time = i * shift;
-          const note_duration = duration - (i * shift);
-          if(note_duration <= 0) { continue; }
 
-          const pitch = pitches[i];
-          const kPitchClasses = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-          const octave = ((pitch / 12) - 1).toString();
-          const pitch_class = kPitchClasses[pitch % 12];
+    var filenames = ["A3", "E4", "B4", "Fsharp5", "Csharp6"];
+    const get_sample_path = function(name) { return "audio/" + waveform_type + "/" + name + ".mp3"; }
 
-          s.triggerAttackRelease(pitch_class + octave, note_duration, "+" + start_time.toString());
-        }
-      }).toMaster();
-    });
+    Promise.all(filenames.map(name => import("../" + get_sample_path(name))))
+      .then(function(values) {
+        var s = new Tone.Sampler({
+          "A3"  : get_sample_path(filenames[0]),
+          "E4"  : get_sample_path(filenames[1]),
+          "B4"  : get_sample_path(filenames[2]),
+          "F#5" : get_sample_path(filenames[3]),
+          "C#6" : get_sample_path(filenames[4]),
+        }, function() {
+          s.volume.value = level;
+          for(var i = 0; i < pitches.length; ++i) {
+            const start_time = i * shift;
+            const note_duration = duration - (i * shift);
+            if(note_duration <= 0) { continue; }
+
+            const pitch = pitches[i];
+            const kPitchClasses = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+            const octave = ((pitch / 12) - 1).toString();
+            const pitch_class = kPitchClasses[pitch % 12];
+
+            s.triggerAttackRelease(pitch_class + octave, note_duration, "+" + start_time.toString());
+          }
+        }).toMaster();
+      });
   }
 
   function playback() {
