@@ -428,15 +428,6 @@ const kPitchIndex = {
 };
 
 function makeNotePlayable(id, pitches) {
-  if(AC == null) {
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if(!AudioContext) {
-      alert("WebAudio not supported");
-      return;
-    }
-    AC = new AudioContext();
-  }
-
   // A3 = 440Hz = 69とする
   var noteNumberToHz = function(note_number) {
     const kBaseNoteNumber = 69;
@@ -545,6 +536,11 @@ function makeNotePlayable(id, pitches) {
   }
 
   function playback() {
+    // モバイル環境で一度ブラウザを閉じていた場合は、
+    // AudioContext が suspend 状態になっていて、音がならない。
+    // なので、再生前に再開しておく。
+    AC.resume();
+
     if(kCurrentVolume <= -48.0) { return; }
     const wt = kCurrentWaveformType;
 
@@ -846,6 +842,14 @@ $(window).on("load", () => {
   window.onpopstate = function(e) {
     changeTargetKeyByURL(window.location.href);
   };
+
+  if(AC == null) {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContext) {
+      alert("WebAudio not supported");
+    }
+    AC = new AudioContext();
+  }
 
   $(".sns-button").css("display", "block");
 
