@@ -37,7 +37,7 @@
     "style-loader": "^0.21.0",
     "tone": "^13.8.25",
     "url-loader": "^1.1.2",
-    "vexflow": "^1.2.89",
+    "vexflow": "^1.2.90",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
