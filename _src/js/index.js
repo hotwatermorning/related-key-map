@@ -46,6 +46,8 @@ const WaveformType = {
   kGuitar: "guitar",
 };
 
+var SamplerTable = new Map();
+
 const kDefaultKey = "C";
 
 const kDefaultEnharmonicMode = EnharmonicMode.kSharp;
@@ -489,33 +491,57 @@ function makeNotePlayable(id, pitches) {
       level += 3;
     }
 
-    var filenames = ["A3", "E4", "B4", "Fsharp5", "Csharp6"];
-    const get_sample_path = function(name) { return "audio/" + waveform_type + "/" + name + ".mp3"; }
+    const get_sample_path = function(name) { return "../audio/" + waveform_type + "/" + name + ".mp3"; }
 
-    Promise.all(filenames.map(name => import("../" + get_sample_path(name))))
-      .then(function(values) {
-        var s = new Tone.Sampler({
-          "A3"  : get_sample_path(filenames[0]),
-          "E4"  : get_sample_path(filenames[1]),
-          "B4"  : get_sample_path(filenames[2]),
-          "F#5" : get_sample_path(filenames[3]),
-          "C#6" : get_sample_path(filenames[4]),
-        }, function() {
-          s.volume.value = level;
-          for(var i = 0; i < pitches.length; ++i) {
-            const start_time = i * shift;
-            const note_duration = duration - (i * shift);
-            if(note_duration <= 0) { continue; }
+    const filenames = ["A3", "E4", "B4", "Fsharp5", "Csharp6"];
 
-            const pitch = pitches[i];
-            const kPitchClasses = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-            const octave = ((pitch / 12) - 1).toString();
-            const pitch_class = kPitchClasses[pitch % 12];
-
-            s.triggerAttackRelease(pitch_class + octave, note_duration, "+" + start_time.toString());
-          }
-        }).toMaster();
+    var promise = undefined;
+    var sampler = SamplerTable.get(waveform_type);
+    if(sampler) {
+      promise = new Promise((resolve, reject) => {
+        resolve(sampler);
       });
+    } else {
+      const load_audio_buffer = function(waveform_type, name) {
+        return new Promise((resolve, reject) => {
+          import(/* webpackChunkName: "sample" */ "../audio/" + waveform_type + "/" + name + ".mp3")
+            .then(module => fetch(module.default))
+            .then(file => file.arrayBuffer())
+            .then(buffer => AC.decodeAudioData(buffer))
+            .then(audio_buffer => resolve(audio_buffer))
+            .catch(e => reject(e));
+        });
+      };
+      promise = new Promise((resolve, reject) => {
+        Promise.all(filenames.map(name => load_audio_buffer(waveform_type, name)))
+        .then(audio_buffers => {
+          var sample_data_list = {};
+          for(var i = 0; i < filenames.length; i++) {
+            sample_data_list[filenames[i].replace("sharp", "#")] = audio_buffers[i];
+          }
+          var sampler = new Tone.Sampler(sample_data_list).toMaster();
+          SamplerTable.set(waveform_type, sampler);
+          resolve(sampler);
+        })
+        .catch(e => reject(e));
+      });
+    }
+
+    promise.then(sampler => {
+      sampler.volume.value = level;
+      for(var i = 0; i < pitches.length; ++i) {
+        const start_time = i * shift;
+        const note_duration = duration - (i * shift);
+        if(note_duration <= 0) { continue; }
+
+        const pitch = pitches[i];
+        const kPitchClasses = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        const octave = ((pitch / 12) - 1).toString();
+        const pitch_class = kPitchClasses[pitch % 12];
+
+        sampler.triggerAttackRelease(pitch_class + octave, note_duration, "+" + start_time.toString());
+      }
+    });
   }
 
   function playback() {
