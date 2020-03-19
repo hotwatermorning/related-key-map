@@ -11,6 +11,16 @@ import { updateLinkUrls } from "./common.js";
 import * as Tone from "tone";
 
 var AC = undefined;
+
+if(AC == null) {
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  if(!AudioContext) {
+    alert("WebAudio not supported");
+  }
+  AC = new AudioContext();
+  Tone.setContext(AC);
+}
+
 var VF = undefined;
 
 import(
@@ -842,14 +852,6 @@ $(window).on("load", () => {
   window.onpopstate = function(e) {
     changeTargetKeyByURL(window.location.href);
   };
-
-  if(AC == null) {
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if(!AudioContext) {
-      alert("WebAudio not supported");
-    }
-    AC = new AudioContext();
-  }
 
   $(".sns-button").css("display", "block");
 
