@@ -57,6 +57,22 @@ const WaveformType = {
 };
 
 var SamplerTable = new Map();
+const kSampleFileNames = ["A3", "E4", "B4", "Fsharp5", "Csharp6"];
+
+function isSynthesizerBasedWaveformType(waveform_type) {
+  const list = [
+    WaveformType.kSine,
+    WaveformType.kSawtooth,
+    WaveformType.kSquare,
+    WaveformType.kTriangle,
+  ];
+
+  return list.indexOf(waveform_type) != -1;
+}
+
+function isSamplerBasedWaveformType(waveform_type) {
+  return isSynthesizerBasedWaveformType(waveform_type) == false;
+}
 
 const kDefaultKey = "C";
 
@@ -437,6 +453,34 @@ const kPitchIndex = {
   "B##": 13,
 };
 
+//! 指定した波形を読み込んだ sampler を作成する Promise を返す。
+function loadSampler(waveform_type) {
+  const load_audio_buffer = function(waveform_type, name) {
+    return new Promise((resolve, reject) => {
+      import(/* webpackChunkName: "sample" */ "../audio/" + waveform_type + "/" + name + ".mp3")
+        .then(module => fetch(module.default))
+        .then(file => file.arrayBuffer())
+        .then(buffer => AC.decodeAudioData(buffer))
+        .then(audio_buffer => resolve(audio_buffer))
+        .catch(e => reject(e));
+    });
+  };
+
+  return new Promise((resolve, reject) => {
+    Promise.all(kSampleFileNames.map(name => load_audio_buffer(waveform_type, name)))
+    .then(audio_buffers => {
+      var sample_data_list = {};
+      for(var i = 0; i < kSampleFileNames.length; i++) {
+        sample_data_list[kSampleFileNames[i].replace("sharp", "#")] = audio_buffers[i];
+      }
+      var sampler = new Tone.Sampler(sample_data_list).toMaster();
+      SamplerTable.set(waveform_type, sampler);
+      resolve(sampler);
+    })
+    .catch(e => reject(e));
+  });
+}
+
 function makeNotePlayable(id, pitches) {
   // A3 = 440Hz = 69とする
   var noteNumberToHz = function(note_number) {
@@ -492,9 +536,6 @@ function makeNotePlayable(id, pitches) {
       level += 3;
     }
 
-    const get_sample_path = function(name) { return "../audio/" + waveform_type + "/" + name + ".mp3"; }
-
-    const filenames = ["A3", "E4", "B4", "Fsharp5", "Csharp6"];
 
     var promise = undefined;
     var sampler = SamplerTable.get(waveform_type);
@@ -503,28 +544,14 @@ function makeNotePlayable(id, pitches) {
         resolve(sampler);
       });
     } else {
-      const load_audio_buffer = function(waveform_type, name) {
-        return new Promise((resolve, reject) => {
-          import(/* webpackChunkName: "sample" */ "../audio/" + waveform_type + "/" + name + ".mp3")
-            .then(module => fetch(module.default))
-            .then(file => file.arrayBuffer())
-            .then(buffer => AC.decodeAudioData(buffer))
-            .then(audio_buffer => resolve(audio_buffer))
-            .catch(e => reject(e));
-        });
-      };
       promise = new Promise((resolve, reject) => {
-        Promise.all(filenames.map(name => load_audio_buffer(waveform_type, name)))
-        .then(audio_buffers => {
-          var sample_data_list = {};
-          for(var i = 0; i < filenames.length; i++) {
-            sample_data_list[filenames[i].replace("sharp", "#")] = audio_buffers[i];
+        var interval_id = setInterval(() => {
+          var sampler = kSampler.get(waveform_type);
+          if(sampler) {
+            clearInterval(interval_id);
+            resolve(sampler);
           }
-          var sampler = new Tone.Sampler(sample_data_list).toMaster();
-          SamplerTable.set(waveform_type, sampler);
-          resolve(sampler);
-        })
-        .catch(e => reject(e));
+        }, 50);
       });
     }
 
@@ -770,6 +797,13 @@ $(() => {
   var volume_slider = document.querySelector("#volume_slider");
   var wt_listbox = document.querySelector("#waveform_type_listbox");
 
+  function loadSamplerIfNeeded(waveform_type) {
+    if(isSamplerBasedWaveformType(waveform_type) && SamplerTable.get(waveform_type) == null) {
+      loadSampler(waveform_type).then(sampler => {
+        SamplerTable.set(waveform_type, sampler);
+      });
+    }
+  }
 
   // waveform type の読み込み
   {
@@ -782,6 +816,7 @@ $(() => {
 
     kCurrentWaveformType = saved_wt;
     wt_listbox.options.selectedIndex = index;
+    loadSamplerIfNeeded(kCurrentWaveformType);
   }
 
   // volume の読み込み
@@ -803,6 +838,7 @@ $(() => {
   wt_listbox.addEventListener("change", function(e) {
     kCurrentWaveformType = e.target.value;
     st.setItem("waveform-type", kCurrentWaveformType);
+    loadSamplerIfNeeded(kCurrentWaveformType);
   });
 
   document.querySelector('.menu-trigger').addEventListener('click', function() {
