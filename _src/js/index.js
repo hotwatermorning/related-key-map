@@ -546,7 +546,7 @@ function makeNotePlayable(id, pitches) {
     } else {
       promise = new Promise((resolve, reject) => {
         var interval_id = setInterval(() => {
-          var sampler = kSampler.get(waveform_type);
+          var sampler = SamplerTable.get(waveform_type);
           if(sampler) {
             clearInterval(interval_id);
             resolve(sampler);
