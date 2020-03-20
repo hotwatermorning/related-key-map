@@ -459,6 +459,9 @@ body {
 .key-detail {
   height: inherit;
   margin: auto;
+  .vf-stavenote {
+    cursor: pointer;
+  }
 }
 
 .staff-box {
