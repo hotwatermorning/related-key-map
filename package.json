@@ -23,7 +23,7 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",
     "http-errors": "~1.6.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jshint": "^2.10.3",
     "modaal": "github:humaan/Modaal",
     "morgan": "^1.9.1",
