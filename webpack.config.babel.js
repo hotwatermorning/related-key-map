@@ -2,7 +2,7 @@ var path = require("path");
 var webpack = require("webpack");
 
 module.exports = (env, args) => {
-  return {
+  e = {
     entry: {
       "index" : "./_src/js/index.js",
       "site-documents": "./_src/js/site-documents.js"
@@ -21,21 +21,30 @@ module.exports = (env, args) => {
         use: [{
           loader: "babel-loader",
           options: {
-            presets: [ "env" ]
+            presets: [ "@babel/preset-env" ]
           }
         }],
       },{
         test: /\.css$/,
         use: [
+          'style-loader',
           {
-            loader: "style-loader"
-          }, {
+            loader: 'css-loader',
+            options: {
+              url: false
+            }
+          },
+          {
             loader: "postcss-loader",
-            options: { config: { path: "./postcss.config.js" } }
+            options: {
+              postcssOptions: {
+                config: path.resolve(__dirname, "postcss.config.js")
+              }
+            }
           }
         ]
       },{
-        test: /\.(jpe?g|png|gif|svg|ico|ttf)(\?.+)?$/,
+        test: /\.(jpe?g|png|gif|svg|ico)(\?.+)?$/,
         include: [
           path.resolve(__dirname, "_src", "images")
         ],
@@ -51,8 +60,7 @@ module.exports = (env, args) => {
         use: {
           loader: "file-loader",
           options: {
-            name: "[name].[ext]",
-            context: "",
+            name: "./fonts/[name].[ext]",
           }
         },
       },{
@@ -80,17 +88,20 @@ module.exports = (env, args) => {
     plugins: [
       new webpack.ProvidePlugin({
         $: 'jquery',
-        jQuery: 'jquery'
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
       })
     ],
   };
-};
 
-if (process.env.NODE_ENV === 'development') {
-  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-  if(!("plugins" in module.exports)) {
-    module.exports.plugins = [];
+  if (process.env.NODE_ENV === 'development') {
+//     const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//     if(!("plugins" in module.exports)) {
+//       e.plugins = [];
+//     }
+//     e.plugins.push(new BundleAnalyzerPlugin());
+    e.devtool = 'eval-source-map';
   }
-  module.exports.plugins.push(new BundleAnalyzerPlugin());
-  module.exports.devtool = 'inline-source-map';
-}
+
+  return e;
+};

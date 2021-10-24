@@ -1,14 +1,16 @@
 import expand_image from "../images/expand.png";
 import speaker_image from "../images/speaker.png";
 import waveform_image from "../images/waveform.png";
-import minimum_key_signature from "../fonts/Minimum_key_signature-Regular.ttf";
 import volume_minus from "../images/minus.png";
 import volume_plus from "../images/plus.png";
+
 require("../images/favicon.ico");
+require('jquery')
 require("modaal/dist/js/modaal.js");
 import "modaal/dist/css/modaal.css"
 import { updateLinkUrls } from "./common.js";
 import * as Tone from "tone";
+require("../css/index.css");
 
 var AC = undefined;
 
@@ -26,10 +28,9 @@ var VF = undefined;
 import(
   /* webpackChunkName: "vexflow" */
   /* webpackMode: "lazy" */
-  "vexflow/releases/vexflow-min.js").then(module => {
-    VF = module.Flow;
+  "vexflow/releases/vexflow-debug.js").then(module => {
+    VF = module.default.Flow;
   });
-import "../css/index.css";
 
 const mod12 = n => { return n % 12; };
 
@@ -636,6 +637,10 @@ function setDetailedKey(key_name, staff, render_context)
 
   $(".key-detail-heading > .key-title").text(toDisplay(key_name));
 
+  staff.setKeySignature(key_name);
+  staff.setContext(render_context);
+  staff.draw();
+
   var stave_notes = [];
   var text_notes = [];
   var note_numbers = [];
@@ -723,11 +728,12 @@ function setDetailedKey(key_name, staff, render_context)
       line: 12,
       font: {
         family: "minimum-key-signature, Cardo",
-        size: 10,
-        weight: ""
+        size: 18 * 72.0 / 96.0 / 1.4,
+        weight: "400"
       },
+      smooth: false,
     });
-    text = text.setJustification(VF.TextNote.Justification.RIGHT);
+    text.setJustification(VF.TextNote.Justification.CENTER);
 
     text_notes.push(text);
 
@@ -747,15 +753,8 @@ function setDetailedKey(key_name, staff, render_context)
   voice.addTickables(stave_notes);
   voice2.addTickables(text_notes);
 
-  staff.setKeySignature(key_name);
-  staff.format();
-  staff.setContext(render_context);
-
-  render_context.clear();
-
   var formatter = new VF.Formatter().joinVoices([voice, voice2]).formatToStave([voice, voice2], staff);
 
-  staff.draw();
   voice.draw(render_context, staff);
   voice2.draw(render_context, staff);
 
@@ -902,17 +901,27 @@ $(window).on("load", () => {
       e.stopPropagation();
 
       var staffDom = $("#staff");
+
+      // SVG の祖先となるこの要素をこの段階で可視化しておかないと
+      // vexflow 内での SVG のサイズ計算（getBBox()）が正しく働かない。
+      // なのでこの段階で可視化しておく。
+      // このままだとモーダルウィンドウを閉じたときに余計な描画が残ってしまうので、
+      // after_close で不可視化する。
+      $("#inline").show();
       $("svg", staffDom).remove();
-      var st = new VF.Stave(0, 70, 0, { fill_style: "#444444" });
-      st.setWidth(staffDom.width() / 1.4 - 2);
+      var st = new VF.Stave(0, 70, 0);
+      st.setWidth(staffDom.width() / 1.4 - 10);
       st.addClef("treble");
       var target_key_name = toInternal($(".key-name-box", $(e.delegateTarget).parent()).text());
 
       var renderer = new VF.Renderer(staffDom[0], VF.Renderer.Backends.SVG);
-      renderer.resize(staffDom.width() / 1.4, staffDom.height());
+      renderer.resize(staffDom.width() / 1.4 - 2, staffDom.height());
 
       var render_context = renderer.getContext();
       setDetailedKey(target_key_name, st, render_context);
     },
+    after_close: function() {
+      $("#inline").hide();
+    }
   });
 });

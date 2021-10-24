@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "minimum-key-signature";
-  src: url("Minimum_key_signature-Regular.ttf") format("truetype");
+  src: url("../fonts/Minimum_key_signature-Regular.ttf") format("truetype");
 }
 
 html {
@@ -474,27 +474,15 @@ body {
 
 .staff {
   margin: auto;
-  width: 730px;
+  width: 800px;
   height: 280px;
-  transform: scale(1.4) translateX(96px);
+  transform: scale(1.4) translateX(116px);
 }
 
 .footer-box {
   background-color: hsl(0, 10%, 10%);
   text-align: center;
   padding: 20px;
-}
-
-.footer-link-box {
-  display: inline-block;
-  height: 16px;
-  line-height: 16px;
-  vertical-align: baseline;
-  color: hsl(0, 100%, 100%);
-  font-family: Montserrat, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  padding: 5px;
 }
 
 .sns-link-box {
@@ -551,7 +539,20 @@ body {
 }
 
 .footer-link-box {
+  display: inline-block;
+  vertical-align: baseline;
+  color: hsl(0, 100%, 100%);
+  font-family: Montserrat, sans-serif;
+  font-weight: 400;
+  padding: 5px;
+  line-height: 75%;
   font-size: 75%;
+
+  @media only screen and (max-width: 950px) {
+    line-height: 100%;
+    font-size: 100%;
+  }
+
   margin: 0px;
   padding: 0px;
 
