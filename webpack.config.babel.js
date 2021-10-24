@@ -58,21 +58,7 @@ module.exports = (env, args) => {
           },
         ]
       },{
-        test: /\.(otf|ttf)$/,
-        include: [
-          path.resolve(__dirname, "_src", "fonts")
-        ],
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              limit: 8192,
-              name: "./fonts/[name].[ext]"
-            }
-          },
-        ]
-      },{
-        test: /\.(mp3)$/,
+        test: /\.(otf|ttf|mp3)$/,
         use: {
           loader: "file-loader",
           options: {

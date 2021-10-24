@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "minimum-key-signature";
-  src: url("../fonts/Minimum_key_signature-Regular.ttf") format("truetype");
+  src: url("./fonts/Minimum_key_signature-Regular.ttf") format("truetype");
 }
 
 html {

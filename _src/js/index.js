@@ -11,6 +11,7 @@ import "modaal/dist/css/modaal.css"
 import { updateLinkUrls } from "./common.js";
 import * as Tone from "tone";
 require("../css/index.css");
+require("../fonts/Minimum_key_signature-Regular.ttf");
 
 var AC = undefined;
 
