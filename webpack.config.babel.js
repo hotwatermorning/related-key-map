@@ -48,21 +48,29 @@ module.exports = (env, args) => {
         include: [
           path.resolve(__dirname, "_src", "images")
         ],
-        use: {
-          loader: "url-loader",
-          options: {
-            limit: 8192,
-            name: "./images/[name].[ext]"
-          }
-        }
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              name: "./images/[name].[ext]"
+            }
+          },
+        ]
       },{
         test: /\.(otf|ttf)$/,
-        use: {
-          loader: "file-loader",
-          options: {
-            name: "./fonts/[name].[ext]",
-          }
-        },
+        include: [
+          path.resolve(__dirname, "_src", "fonts")
+        ],
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              name: "./fonts/[name].[ext]"
+            }
+          },
+        ]
       },{
         test: /\.(mp3)$/,
         use: {
