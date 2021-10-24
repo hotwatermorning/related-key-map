@@ -28,7 +28,7 @@ var VF = undefined;
 import(
   /* webpackChunkName: "vexflow" */
   /* webpackMode: "lazy" */
-  "vexflow/releases/vexflow-debug.js").then(module => {
+  "vexflow/releases/vexflow-min.js").then(module => {
     VF = module.default.Flow;
   });
 
